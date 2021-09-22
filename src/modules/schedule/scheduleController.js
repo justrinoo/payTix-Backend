@@ -4,33 +4,28 @@ module.exports = {
 	getAllSchedule: async (request, response) => {
 		try {
 			/**
-			 * Default Value
+			 * 	Default Value
 			 * - page = 1
 			 * - limit = 10
 			 * - sort => ASC / DESC
 			 * - search => name
 			 * - sortField => nameField
 			 */
-			let { searchLocation, searchMoveId, page, limit } = request.query;
+			const allSchedule = await scheduleModel.getAllSchedule();
+			let { searchMovieId, searchLocation, page, limit, sort } = request.query;
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
-			searchLocation = searchLocation === "" ? "null" : searchLocation;
-			searchMoveId = searchMoveId === "" ? "null" : searchMoveId;
-			console.log(searchLocation);
-			// searchMoveId !== "" ? 1 : searchMoveId;
+			sort = sort === "" ? "ASC" : sort;
 			const offset = page * limit - limit;
 			const totalData = await scheduleModel.totalDataSchedule();
 			const totalPage = Math.ceil(totalData / limit);
-			const results = await scheduleModel.getAllSchedule(
+			const results = await scheduleModel.getScheduleSearch(
+				searchMovieId,
 				searchLocation,
 				limit,
-				offset
+				offset,
+				sort
 			);
-			// const resultMovieId = await scheduleModel.getScheduleByMovieId(
-			// 	searchMoveId,
-			// 	limit,
-			// 	offset
-			// );
 
 			let pageInfo = {
 				page,
@@ -38,54 +33,38 @@ module.exports = {
 				limit,
 				totalData,
 			};
+			if (searchLocation === "") {
+				searchLocation = helperResponse.response(
+					response,
+					200,
+					"Berhasil mendapatkan semua data!",
+					allSchedule,
+					pageInfo
+				);
+				return;
+			} else {
+				searchLocation;
+			}
 
-			// if (searchLocation) {
-			// const checkDataLocations =
-			// 	resultsLocation.length < 1 ? null : resultsLocation;
-			// const checkMessage =
-			// 	resultsLocation.length < 1
-			// 		? "data tidak ditemukan!"
-			// 		: "Berhasil mendapatkan data!";
-			// let PageInfoNull = {
-			// 	page,
-			// 	totalPage,
-			// 	limit,
-			// 	totalData: 0,
-			// };
-			// const checkPageInfo =
-			// 	resultsLocation.length < 1 ? PageInfoNull : pageInfo;
-			// const checkStatusCode = resultsLocation.length < 1 ? 404 : 200;
+			if (searchMovieId === "") {
+				searchMovieId = helperResponse.response(
+					response,
+					200,
+					"Berhasil mendapatkan semua data!",
+					allSchedule,
+					pageInfo
+				);
+			} else {
+				searchMovieId;
+			}
+
 			return helperResponse.response(
 				response,
 				200,
-				`Berhasil mendapatkan data!`,
+				`Berhasil mendapatkan data berdasarkan pencarian!`,
 				results,
 				pageInfo
 			);
-			// } else if (searchMoveId) {
-			// 	const checkDataMovieId =
-			// 		resultMovieId.length < 1 ? null : resultMovieId;
-			// 	const checkMessage =
-			// 		resultMovieId.length < 1
-			// 			? "data tidak ditemukan!"
-			// 			: "Berhasil mendapatkan data!";
-			// 	let PageInfoNull = {
-			// 		page,
-			// 		totalPage,
-			// 		limit,
-			// 		totalData: 0,
-			// 	};
-			// 	const checkPageInfo =
-			// 		resultMovieId.length < 1 ? PageInfoNull : pageInfo;
-			// 	const checkStatusCode = resultMovieId.length < 1 ? 404 : 200;
-			// 	return helperResponse.response(
-			// 		response,
-			// 		checkStatusCode,
-			// 		checkMessage,
-			// 		checkDataMovieId,
-			// 		checkPageInfo
-			// 	);
-			// }
 		} catch (error) {
 			return helperResponse.response(
 				response,

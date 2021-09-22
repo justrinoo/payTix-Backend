@@ -1,12 +1,12 @@
 const connection = require("../../config/mysql");
 
 module.exports = {
-	getAllSchedule: (searchLocation, limit, offset) =>
+	getScheduleSearch: (searchMoveId, searchLocation, limit, offset, sort) =>
 		new Promise((resolve, reject) => {
 			connection.query(
-				"SELECT * FROM movie JOIN schedule ON movie.id=schedule.movie_id WHERE location LIKE ? ORDER BY location ASC LIMIT ? OFFSET ?",
-				// SELECT * FROM movie JOIN schedule ON movie.id=schedule.movie_id WHERE title LIKE "%shin%" ORDER BY location LIMIT 1 OFFSET 0
-				[`%${searchLocation}%`, limit, offset],
+				`SELECT * FROM movie JOIN schedule ON movie.id=schedule.movie_id WHERE movie_id = ? OR location LIKE ? ORDER BY price ${sort} LIMIT ? OFFSET ?`,
+				// SELECT * FROM movie JOIN schedule ON movie.id=schedule.movie_id WHERE movie_id = 4 OR location LIKE "%kawkaokwoakw%" ORDER BY price ASC LIMIT 2 OFFSET 0
+				[searchMoveId, `%${searchLocation}%`, limit, offset, sort],
 				(error, results) => {
 					if (!error) {
 						resolve(results);
@@ -16,11 +16,10 @@ module.exports = {
 				}
 			);
 		}),
-	getScheduleByMovieId: (searchMoveId, limit, offset) =>
+	getAllSchedule: () =>
 		new Promise((resolve, reject) => {
 			connection.query(
-				"SELECT * FROM movie JOIN schedule ON movie.id=schedule.movie_id WHERE movie_id LIKE ? ORDER BY location ASC LIMIT ? OFFSET ?",
-				[`%${searchMoveId}%`, limit, offset],
+				"SELECT * FROM movie JOIN schedule ON movie.id=schedule.movie_id ORDER BY movie.title",
 				(error, results) => {
 					if (!error) {
 						resolve(results);
