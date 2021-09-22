@@ -12,13 +12,27 @@ module.exports = {
 			 * - sortField => nameField
 			 */
 			const allSchedule = await scheduleModel.getAllSchedule();
-			let { searchMovieId, searchLocation, page, limit, sort } = request.query;
+			let {
+				searchMovieId,
+				searchLocation,
+				page,
+				limit,
+				sort = "ASC",
+			} = request.query;
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
 			sort = sort === "" ? "ASC" : sort;
+			// console.log(searchLocation);
+			// console.log(searchMovieId);
+			// console.log(page);
+			// console.log(limit);
+			// console.log(sort);
 			const offset = page * limit - limit;
 			const totalData = await scheduleModel.totalDataSchedule();
 			const totalPage = Math.ceil(totalData / limit);
+			if (searchLocation && searchMovieId && sort === "undefined") {
+				console.log(allSchedule);
+			}
 			const results = await scheduleModel.getScheduleSearch(
 				searchMovieId,
 				searchLocation,
@@ -58,13 +72,22 @@ module.exports = {
 				searchMovieId;
 			}
 
-			return helperResponse.response(
-				response,
-				200,
-				`Berhasil mendapatkan data berdasarkan pencarian!`,
-				results,
-				pageInfo
-			);
+			if (results.length === 0) {
+				return helperResponse.response(
+					response,
+					200,
+					`Berhasil mendapatkan semua data!`,
+					allSchedule
+				);
+			} else {
+				return helperResponse.response(
+					response,
+					200,
+					`Berhasil mendapatkan data berdasarkan pencarian!`,
+					results,
+					pageInfo
+				);
+			}
 		} catch (error) {
 			return helperResponse.response(
 				response,
