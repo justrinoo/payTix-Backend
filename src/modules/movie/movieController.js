@@ -9,6 +9,7 @@ module.exports = {
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
 			sortName = sortName === "" ? "ASC" : sortName;
+			sortDate = sortDate === "" ? "DESC" : sortDate;
 			// OFFSET ?
 			// page 1, limit 3 = offset 0
 			// page 2, limit 3 = offset 3
