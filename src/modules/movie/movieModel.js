@@ -1,11 +1,12 @@
 const connection = require("../../config/mysql");
 
 module.exports = {
-	getAllMovie: (limit, offset) =>
+	getAllMovie: (searchName, sortName, sortDate, limit, offset) =>
 		new Promise((resolve, reject) => {
-			connection.query(
-				"SELECT * FROM movie LIMIT ? OFFSET ?",
-				[limit, offset],
+			const query = connection.query(
+				`SELECT * FROM movie WHERE title LIKE ? ORDER BY title ${sortName}, releaseDate ${sortDate} LIMIT ? OFFSET ?`,
+				[`%${searchName}%`, limit, offset, sortName, sortDate],
+
 				function (err, results) {
 					if (!err) {
 						resolve(results);
@@ -14,6 +15,7 @@ module.exports = {
 					}
 				}
 			);
+			console.log(query.sql);
 		}),
 	getMovieId: (id) =>
 		new Promise((resolve, reject) => {

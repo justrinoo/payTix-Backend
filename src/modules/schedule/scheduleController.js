@@ -30,9 +30,7 @@ module.exports = {
 			const offset = page * limit - limit;
 			const totalData = await scheduleModel.totalDataSchedule();
 			const totalPage = Math.ceil(totalData / limit);
-			if (searchLocation && searchMovieId && sort === "undefined") {
-				console.log(allSchedule);
-			}
+
 			const results = await scheduleModel.getScheduleSearch(
 				searchMovieId,
 				searchLocation,
@@ -72,11 +70,11 @@ module.exports = {
 				searchMovieId;
 			}
 
-			if (results.length === 0) {
+			if (results.length < 1) {
 				return helperResponse.response(
 					response,
 					200,
-					`Berhasil mendapatkan semua data!`,
+					"Berhasil mendapatkan semua data!",
 					allSchedule
 				);
 			} else {

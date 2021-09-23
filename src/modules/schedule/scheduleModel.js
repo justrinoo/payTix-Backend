@@ -28,7 +28,6 @@ module.exports = {
 					}
 				}
 			);
-			// console.log(query);
 		}),
 	totalDataSchedule: () =>
 		new Promise((resolve, reject) => {

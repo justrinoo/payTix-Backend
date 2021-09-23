@@ -5,21 +5,26 @@ module.exports = {
 		try {
 			// console.log(request.query);
 			// pagination
-			let { page, limit } = request.query;
+			let { page, limit, searchName, sortName, sortDate } = request.query;
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
+			sortName = sortName === "" ? "ASC" : sortName;
 			// OFFSET ?
 			// page 1, limit 3 = offset 0
 			// page 2, limit 3 = offset 3
 			// dst ...
 			const offset = page * limit - limit;
-			// console.log(offset);
 			const totalData = await movieModel.getCountMovie();
-			// console.log(limit);
-			// console.log(offset);
 
-			const results = await movieModel.getAllMovie(limit, offset);
-			console.log(results);
+			const results = await movieModel.getAllMovie(
+				searchName,
+				sortName,
+				sortDate,
+				limit,
+				offset
+			);
+
+			// console.log(newResults);
 			let totalPage = Math.ceil(totalData / limit);
 
 			const pageInfo = {
