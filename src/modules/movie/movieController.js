@@ -5,7 +5,13 @@ module.exports = {
 		try {
 			// console.log(request.query);
 			// pagination
-			let { page, limit, searchName, sortName, sortDate } = request.query;
+			let {
+				page,
+				limit,
+				searchName,
+				sortName = "ASC",
+				sortDate = "DESC",
+			} = request.query;
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
 			sortName = sortName === "" ? "ASC" : sortName;
@@ -17,14 +23,22 @@ module.exports = {
 			const offset = page * limit - limit;
 			const totalData = await movieModel.getCountMovie();
 
-			const results = await movieModel.getAllMovie(
+			const results = await movieModel.getMovieByFilter(
 				searchName,
 				sortName,
 				sortDate,
 				limit,
 				offset
 			);
-
+			const allMovie = await movieModel.getAllMovie();
+			if (results.length < 1) {
+				return helperWrapper.response(
+					response,
+					200,
+					"Berhasil mengambil semua data movie!",
+					allMovie
+				);
+			}
 			// console.log(newResults);
 			let totalPage = Math.ceil(totalData / limit);
 
@@ -34,10 +48,11 @@ module.exports = {
 				limit,
 				totalData,
 			};
+
 			return helperWrapper.response(
 				response,
 				200,
-				"Berhasil mengambil semua data movie",
+				"Berhasil mendapatkan data sesuai pencarian!",
 				results,
 				pageInfo
 			);
