@@ -2,8 +2,6 @@ const helperResponse = require("../../helpers/wrapper");
 const bookingModel = require("./bookingModel");
 // helperResponse.response(response, 400, `Bad Request : ${error.message}`, null);
 module.exports = {
-	// MENDING UBAH DULU SEMUA KE PARAMETER TAPI, YANG SEAT BOOKING PAKE QUERY
-	// KALO DIJALANIN MASIH ERROR
 	getListBooking: async function (request, response) {
 		try {
 			// console.log("Booking Ready Use!");
@@ -67,6 +65,27 @@ module.exports = {
 				seat: dataSeat,
 			};
 
+			//const newResult = [];
+			// result.forEach((element) => {
+			// 	const setData = {
+			// 		...element,
+			// 		seat: [element.seat],
+			// 	};
+			// 	const checkData = newResult.find((value) => value.id === setData.id);
+			// 	if (!checkData) {
+			// 		newResult.push(setData);
+			// 	} else {
+			// 		checkData.seat.push(setData.seat[0]);
+			// 	}
+			// });
+
+			// for (const value of dataBooking) {
+			// 	console.log(value.id);
+			// 	// value.skill = await movieModel.getSkillByUserId(value.user_id);
+			// 	value.seat = [{ seat: "A1" }, { seat: "A2" }, { seat: "A3" }];
+			// }
+			// console.log(req.query)
+
 			if (dataBooking.length < 1) {
 				return helperResponse.response(
 					response,
@@ -95,15 +114,52 @@ module.exports = {
 			const { id } = request.params;
 			const checkUserId = await bookingModel.detailBookingUserId(id);
 			if (checkUserId.length < 1) {
-				helperResponse.response(
+				return helperResponse.response(
 					response,
 					404,
 					`maaf data dengan id : ${id}, tidak ditemukan!`,
 					null
 				);
 			}
-			console.log("Booking by user id  found!", checkUserId);
-			console.log("Detail booking by user id ready to use : ", user_id);
+
+			const spreadDataBooking = {
+				...checkUserId,
+			};
+			const newData = spreadDataBooking;
+			const newDataBookingUserId = {
+				...newData,
+			};
+			let tempSeat = [];
+			for (const value in newDataBookingUserId) {
+				const data = newDataBookingUserId[value];
+				const newData = { ...data };
+				if (data.id === newData.id) {
+					if (newData.seat[0] === data.seat[0]) {
+						let seat = newData.seat && data.seat;
+						tempSeat.push(seat);
+					}
+				}
+			}
+			const breakSeat = tempSeat.splice(2);
+			// tempSeat
+			// dapet data seat jadi nya => ['A1','A2']
+			/**
+			 * variable teampSeat isinya duplicate seat jadi 2
+			 * sekarang tinggal gimana cara biar ga duplicate
+			 */
+			// console.log(tempSeat);
+			const dataBaru = { ...newData };
+			console.log(`1`, dataBaru[0]);
+			const dataBaru2 = { ...spreadDataBooking };
+			console.log(`2`, dataBaru2[2]);
+			// GA DINAMISSSSS :(
+
+			return helperResponse.response(
+				response,
+				200,
+				"Data Booking Berdasarkan User, ditemukan!",
+				newDataBookingUserId
+			);
 		} catch (error) {
 			helperResponse.response(
 				response,

@@ -30,10 +30,10 @@ module.exports = {
 				}
 			);
 		}),
-	deatilBookingUserId: (id) =>
+	detailBookingUserId: (id) =>
 		new Promise((resolve, reject) => {
 			connection.query(
-				"SELECT booking.id, booking.userId,booking.dateBooking,booking.timeBooking,booking.movieId,booking.scheduleId,booking.totalTicket,booking.totalPayment,booking.paymentMethod,booking.statusPayment,seatBooking.seat FROM booking JOIN seatBooking ON booking.id=userId = ?",
+				"SELECT booking.id, booking.userId,booking.dateBooking,booking.timeBooking,booking.movieId,booking.scheduleId,booking.totalTicket,booking.totalPayment,booking.paymentMethod,booking.statusPayment,seatBooking.seat FROM booking JOIN seatBooking ON booking.id=seatBooking.bookingId WHERE booking.userId = ?",
 				id,
 				(error, results) => {
 					if (!error) {
@@ -44,6 +44,7 @@ module.exports = {
 				}
 			);
 		}),
+
 	listSeat: (scheduleId, movieId) =>
 		new Promise((resolve, reject) => {
 			connection.query(
