@@ -66,6 +66,7 @@ module.exports = {
 					allSchedule,
 					pageInfo
 				);
+				return;
 			} else {
 				searchMovieId;
 			}
@@ -139,7 +140,7 @@ module.exports = {
 				location,
 				dateStart,
 				dateEnd,
-				time,
+				time: time.split(",").join(""),
 			};
 			const results = await scheduleModel.createSchedule(dataSchedule);
 			return helperResponse.response(
