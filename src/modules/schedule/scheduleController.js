@@ -140,8 +140,9 @@ module.exports = {
 				location,
 				dateStart,
 				dateEnd,
-				time: time.split(",").join(""),
+				time: time.split(" ").join(""),
 			};
+			// console.log(dataSchedule);
 			const results = await scheduleModel.createSchedule(dataSchedule);
 			return helperResponse.response(
 				response,
@@ -170,9 +171,10 @@ module.exports = {
 					null
 				);
 			}
-			const body = request.body;
+			const { time, body } = request.body;
 			const dataSchedule = {
 				...body,
+				time: time.split(" ").join(""),
 				updatedAt: new Date(Date.now()),
 			};
 			const results = await scheduleModel.updateSchedule(dataSchedule, id);

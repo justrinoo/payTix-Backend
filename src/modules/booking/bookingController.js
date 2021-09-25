@@ -2,47 +2,6 @@ const helperResponse = require("../../helpers/wrapper");
 const bookingModel = require("./bookingModel");
 // helperResponse.response(response, 400, `Bad Request : ${error.message}`, null);
 module.exports = {
-	getListBooking: async function (request, response) {
-		try {
-			// console.log("Booking Ready Use!");
-			// UBAH KE PARAMETERRR!!!!!
-			let { IdBooking, IdUser } = request.query;
-			IdBooking = IdBooking === "" ? 0 : IdBooking;
-			IdUser = IdUser === "" ? 0 : IdUser;
-			const listBooking = await bookingModel.listBooking(IdBooking, IdUser);
-			if (listBooking.length === 0) {
-				return helperResponse.response(
-					response,
-					404,
-					"Booking tidak ditemukan!",
-					null
-				);
-			}
-			if (IdBooking === 0 && IdUser === 0) {
-				return helperResponse.response(
-					response,
-					404,
-					"Booking tidak ditemukan!",
-					null
-				);
-			} else {
-				return helperResponse.response(
-					response,
-					200,
-					"Berhasil mendapatkan data booking!",
-					listBooking
-				);
-			}
-		} catch (error) {
-			// response.status(500).send(error.message);
-			helperResponse.response(
-				response,
-				400,
-				`Bad Request : ${error.message}`,
-				null
-			);
-		}
-	},
 	detailByBookingId: async function (request, response) {
 		try {
 			const id = request.params.id;
@@ -64,27 +23,6 @@ module.exports = {
 				...dataNewBooking,
 				seat: dataSeat,
 			};
-
-			//const newResult = [];
-			// result.forEach((element) => {
-			// 	const setData = {
-			// 		...element,
-			// 		seat: [element.seat],
-			// 	};
-			// 	const checkData = newResult.find((value) => value.id === setData.id);
-			// 	if (!checkData) {
-			// 		newResult.push(setData);
-			// 	} else {
-			// 		checkData.seat.push(setData.seat[0]);
-			// 	}
-			// });
-
-			// for (const value of dataBooking) {
-			// 	console.log(value.id);
-			// 	// value.skill = await movieModel.getSkillByUserId(value.user_id);
-			// 	value.seat = [{ seat: "A1" }, { seat: "A2" }, { seat: "A3" }];
-			// }
-			// console.log(req.query)
 
 			if (dataBooking.length < 1) {
 				return helperResponse.response(
