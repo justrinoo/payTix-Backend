@@ -44,12 +44,11 @@ module.exports = {
 				}
 			);
 		}),
-
-	listSeat: (scheduleId, movieId) =>
+	listSeatBooking: (scheduleId, movieId, dateBooking, timeBooking) =>
 		new Promise((resolve, reject) => {
 			connection.query(
-				`SELECT * FROM seatbooking WHERE scheduleId = ${scheduleId} AND movieId = ${movieId}`,
-				[scheduleId, movieId],
+				"SELECT id_seatBooking, seat FROM seatBooking WHERE scheduleId = ? AND movieId = ? AND dateSchedule = ? AND timeSchedule = ?",
+				[scheduleId, movieId, dateBooking, timeBooking],
 				(error, results) => {
 					if (!error) {
 						resolve(results);

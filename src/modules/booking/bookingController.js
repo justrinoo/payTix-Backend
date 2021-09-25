@@ -121,47 +121,65 @@ module.exports = {
 					null
 				);
 			}
-
-			const spreadDataBooking = {
-				...checkUserId,
-			};
-			const newData = spreadDataBooking;
-			const newDataBookingUserId = {
-				...newData,
-			};
-			let tempSeat = [];
-			for (const value in newDataBookingUserId) {
-				const data = newDataBookingUserId[value];
-				const newData = { ...data };
-				if (data.id === newData.id) {
-					if (newData.seat[0] === data.seat[0]) {
-						let seat = newData.seat && data.seat;
-						tempSeat.push(seat);
-					}
-				}
+			// console.log(`Data Awal => `, checkUserId);
+			// PROSES PECAH ID
+			let newData = [];
+			let uniqData = {};
+			let dataSeat = [];
+			for (let i in checkUserId) {
+				propId = checkUserId[i]["id"];
+				propSeat = checkUserId[i]["seat"];
+				uniqData[propId] = checkUserId[i];
+				dataSeat.push(propSeat);
 			}
-			const breakSeat = tempSeat.splice(2);
-			// tempSeat
-			// dapet data seat jadi nya => ['A1','A2']
-			/**
-			 * variable teampSeat isinya duplicate seat jadi 2
-			 * sekarang tinggal gimana cara biar ga duplicate
-			 */
-			// console.log(tempSeat);
-			const dataBaru = { ...newData };
-			console.log(`1`, dataBaru[0]);
-			const dataBaru2 = { ...spreadDataBooking };
-			console.log(`2`, dataBaru2[2]);
-			// GA DINAMISSSSS :(
 
+			for (let newDataUserById in uniqData) {
+				const newDataUserDataById = {
+					...uniqData[newDataUserById],
+					seat: dataSeat,
+				};
+				newData.push(newDataUserDataById);
+			}
 			return helperResponse.response(
 				response,
 				200,
 				"Data Booking Berdasarkan User, ditemukan!",
-				newDataBookingUserId
+				newData
 			);
 		} catch (error) {
 			helperResponse.response(
+				response,
+				400,
+				`Bad Request : ${error.message}`,
+				null
+			);
+		}
+	},
+	detailSeatBooking: async function (request, response) {
+		try {
+			const { scheduleId, movieId, dateBooking, timeBooking } = request.query;
+			const resultsSeat = await bookingModel.listSeatBooking(
+				scheduleId,
+				movieId,
+				dateBooking,
+				timeBooking
+			);
+			if (resultsSeat.length < 1) {
+				return helperResponse.response(
+					response,
+					404,
+					"data seat booking tidak ditemukan!",
+					null
+				);
+			}
+			return helperResponse.response(
+				response,
+				200,
+				"Data seat booking berhasil didapatkan!",
+				resultsSeat
+			);
+		} catch (error) {
+			return helperResponse.response(
 				response,
 				400,
 				`Bad Request : ${error.message}`,
