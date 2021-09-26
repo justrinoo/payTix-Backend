@@ -64,14 +64,24 @@ module.exports = {
 			let newData = [];
 			let uniqData = {};
 			let dataSeat = [];
-			for (let i in checkUserId) {
-				propId = checkUserId[i]["id"];
-				propSeat = checkUserId[i]["seat"];
-				uniqData[propId] = checkUserId[i];
+			for (let value in checkUserId) {
+				propId = checkUserId[value]["id"];
+				propSeat = checkUserId[value]["seat"];
+				const data = (uniqData[propId] = checkUserId[value]);
+				// console.log(data);
 				dataSeat.push(propSeat);
+				uniqData[propId] = { ...data, seat: dataSeat };
+				// console.log(checkData[propId]);
+				// SEATNYA UDAH MASUK KE MASING MASING PROPERTY
 			}
-
+			// console.log(uniqData);
 			for (let newDataUserById in uniqData) {
+				// const newDataSeat = dataSeat;
+				// const data = newDataSeat.map((value) => {
+				// console.log(value)
+				// return value;
+				// });
+				// const newDataSeat2 = data.splice(2);
 				const newDataUserDataById = {
 					...uniqData[newDataUserById],
 					seat: dataSeat,
@@ -197,7 +207,7 @@ module.exports = {
 			const { id } = request.params;
 			const dataBodyUpdate = request.body;
 
-			const checkBookingId = await bookingModel.detailBooking(id);
+			const checkBookingId = await bookingModel.detailBookingId(id);
 			if (checkBookingId.length < 1) {
 				return helperResponse.response(
 					response,
@@ -233,9 +243,9 @@ module.exports = {
 	deleteBooking: async function (request, response) {
 		try {
 			const id = request.params.id;
-			const bookingId = await bookingModel.detailBooking(id);
+			const bookingId = await bookingModel.detailBookingId(id);
 			if (bookingId.length < 1) {
-				helperResponse.response(
+				return helperResponse.response(
 					response,
 					404,
 					`Maaf data booking dengan id ${id}, tidak ditemukan!`,

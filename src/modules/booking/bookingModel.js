@@ -46,7 +46,7 @@ module.exports = {
 		}),
 	listSeatBooking: (scheduleId, movieId, dateBooking, timeBooking) =>
 		new Promise((resolve, reject) => {
-			connection.query(
+			const query = connection.query(
 				"SELECT id_seatBooking, seat FROM seatBooking WHERE scheduleId = ? AND movieId = ? AND dateSchedule = ? AND timeSchedule = ?",
 				[scheduleId, movieId, dateBooking, timeBooking],
 				(error, results) => {
@@ -57,6 +57,7 @@ module.exports = {
 					}
 				}
 			);
+			console.log(query.sql);
 		}),
 	createBooking: (posts) =>
 		new Promise((resolve, reject) => {

@@ -61,10 +61,9 @@ module.exports = {
 			if (searchMovieId === "") {
 				searchMovieId = helperResponse.response(
 					response,
-					200,
+					404,
 					"Berhasil mendapatkan semua data!",
-					allSchedule,
-					pageInfo
+					allSchedule
 				);
 				return;
 			} else {
@@ -171,10 +170,9 @@ module.exports = {
 					null
 				);
 			}
-			const { time, body } = request.body;
+			const body = request.body;
 			const dataSchedule = {
 				...body,
-				time: time.split(" ").join(""),
 				updatedAt: new Date(Date.now()),
 			};
 			const results = await scheduleModel.updateSchedule(dataSchedule, id);

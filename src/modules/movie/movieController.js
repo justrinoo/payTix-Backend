@@ -23,7 +23,7 @@ module.exports = {
 			const offset = page * limit - limit;
 			const totalData = await movieModel.getCountMovie();
 
-			const results = await movieModel.getMovieByFilter(
+			let results = await movieModel.getMovieByFilter(
 				searchName,
 				sortName,
 				sortDate,
@@ -48,12 +48,20 @@ module.exports = {
 				limit,
 				totalData,
 			};
+			let newDataMovie = [];
+			for (const data in results) {
+				const setNewData = {
+					...results[data],
+					releaseDate: results[data].releaseDate.toLocaleDateString(),
+				};
+				newDataMovie.push(setNewData);
+			}
 
 			return helperWrapper.response(
 				response,
 				200,
 				"Berhasil mendapatkan data sesuai pencarian!",
-				results,
+				newDataMovie,
 				pageInfo
 			);
 		} catch (error) {
@@ -69,6 +77,14 @@ module.exports = {
 		try {
 			const { id } = request.params;
 			const results = await movieModel.getMovieId(id);
+			let newDataMovie = [];
+			for (const data in results) {
+				const setNewData = {
+					...results[data],
+					releaseDate: results[data].releaseDate.toLocaleDateString(),
+				};
+				newDataMovie.push(setNewData);
+			}
 			if (results.length < 1) {
 				return helperWrapper.response(
 					response,
@@ -82,7 +98,7 @@ module.exports = {
 					response,
 					200,
 					`Berhasil mendapatkan movie id!`,
-					results
+					newDataMovie
 				);
 			}
 		} catch (error) {
