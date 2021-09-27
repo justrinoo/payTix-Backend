@@ -8,7 +8,8 @@ module.exports = {
 			limit = limit > 0 ? Number(limit) : 10;
 			sort = sort === "" ? "ASC" : sort;
 			const offset = page * limit - limit;
-			const totalData = await movieModel.getCountMovie();
+			const totalData = await movieModel.getCountMovie(searchName);
+			let totalPage = Math.ceil(totalData / limit);
 
 			let results = await movieModel.getMovieByFilter(
 				searchName,
@@ -16,6 +17,7 @@ module.exports = {
 				limit,
 				offset
 			);
+
 			const allMovie = await movieModel.getAllMovie();
 			if (results.length < 1) {
 				return helperWrapper.response(
@@ -25,14 +27,22 @@ module.exports = {
 					allMovie
 				);
 			}
-			let totalPage = Math.ceil(totalData / limit);
-
 			const pageInfo = {
 				page,
-				totalPage: totalPage,
+				totalPage,
 				limit,
 				totalData,
 			};
+			if (searchName === "") {
+				searchName = helperWrapper.response(
+					response,
+					200,
+					"tidak ada data yang di cari!",
+					pageInfo
+				);
+				return;
+			}
+
 			let newDataMovie = [];
 			for (const data in results) {
 				const setNewData = {

@@ -40,15 +40,16 @@ module.exports = {
 				}
 			);
 		}),
-	getCountMovie: () =>
+	getCountMovie: (search) =>
 		new Promise((resolve, reject) => {
 			connection.query(
-				"SELECT COUNT(*) AS total FROM movie",
+				"SELECT COUNT(*) AS total FROM movie WHERE title LIKE ?",
+				`%${search}%`,
 				(error, results) => {
 					if (!error) {
 						resolve(results[0].total);
 					} else {
-						reject(new Error(`SQL : ${err.sqlMessage}`));
+						reject(new Error(`SQL : ${error.sqlMessage}`));
 					}
 				}
 			);
