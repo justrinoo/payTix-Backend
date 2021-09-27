@@ -1,0 +1,7 @@
+NodeJS adalah sebuah runtime javascript yang bisa berjalan disisi server, runtime javascript nodejs di jalankan oleh V8 Engine dari Chrome.
+
+ExpressJs adalah sebuah framework nodejs yang fleksible dan bisa membuat sebuah web application.
+
+Mysql adalah sebuah DataBase Management System yang dilakukan oleh perintah bahasa SQL
+
+RESTAPI adalah Representasi state atau bisa di analoginya itu seperti transaksi 2 arah ada local dan server, dan di RESTAPI itu ada beberapa method ada GET,POST,PATCH,PUT,DELETE

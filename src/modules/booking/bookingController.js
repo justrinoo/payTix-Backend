@@ -7,12 +7,14 @@ module.exports = {
 			const id = request.params.id;
 			const dataBooking = await bookingModel.detailBookingId(id);
 			// ambil data seat dan gabungkan ke array
+			// buat ambil seat
 			const dataSeat = [];
 			dataBooking.forEach((value) => {
 				const data = value.seat;
 				dataSeat.push(data);
 				return data;
 			});
+
 			const dataNewBookingLoop = dataBooking.map((value) => {
 				const data = value;
 				return data;
@@ -59,8 +61,7 @@ module.exports = {
 					null
 				);
 			}
-			// console.log(`Data Awal => `, checkUserId);
-			// PROSES PECAH ID
+
 			let newData = [];
 			let uniqData = {};
 			let dataSeat = [];
@@ -68,20 +69,10 @@ module.exports = {
 				propId = checkUserId[value]["id"];
 				propSeat = checkUserId[value]["seat"];
 				const data = (uniqData[propId] = checkUserId[value]);
-				// console.log(data);
 				dataSeat.push(propSeat);
 				uniqData[propId] = { ...data, seat: dataSeat };
-				// console.log(checkData[propId]);
-				// SEATNYA UDAH MASUK KE MASING MASING PROPERTY
 			}
-			// console.log(uniqData);
 			for (let newDataUserById in uniqData) {
-				// const newDataSeat = dataSeat;
-				// const data = newDataSeat.map((value) => {
-				// console.log(value)
-				// return value;
-				// });
-				// const newDataSeat2 = data.splice(2);
 				const newDataUserDataById = {
 					...uniqData[newDataUserById],
 					seat: dataSeat,
