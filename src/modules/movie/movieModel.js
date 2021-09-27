@@ -1,11 +1,11 @@
 const connection = require("../../config/mysql");
 
 module.exports = {
-	getMovieByFilter: (searchName, sortName, sortDate, limit, offset) =>
+	getMovieByFilter: (searchName, sort, limit, offset) =>
 		new Promise((resolve, reject) => {
 			connection.query(
-				`SELECT * FROM movie WHERE title LIKE ? ORDER BY title ${sortName}, releaseDate ${sortDate} LIMIT ? OFFSET ?`,
-				[`%${searchName}%`, limit, offset, sortName, sortDate],
+				`SELECT * FROM movie WHERE title LIKE ? ORDER BY title ${sort}, releaseDate  LIMIT ? OFFSET ?`,
+				[`%${searchName}%`, limit, offset, sort],
 
 				function (err, results) {
 					if (!err) {
@@ -32,8 +32,6 @@ module.exports = {
 				"SELECT * FROM movie WHERE id = ?",
 				id,
 				function (err, results) {
-					console.log(err);
-					console.log(results);
 					if (!err) {
 						resolve(results);
 					} else {

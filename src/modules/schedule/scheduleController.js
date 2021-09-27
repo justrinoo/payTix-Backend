@@ -22,11 +22,6 @@ module.exports = {
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
 			sort = sort === "" ? "ASC" : sort;
-			// console.log(searchLocation);
-			// console.log(searchMovieId);
-			// console.log(page);
-			// console.log(limit);
-			// console.log(sort);
 			const offset = page * limit - limit;
 			const totalData = await scheduleModel.totalDataSchedule();
 			const totalPage = Math.ceil(totalData / limit);
@@ -141,7 +136,6 @@ module.exports = {
 				dateEnd,
 				time: time.split(" ").join(""),
 			};
-			// console.log(dataSchedule);
 			const results = await scheduleModel.createSchedule(dataSchedule);
 			return helperResponse.response(
 				response,
@@ -193,7 +187,6 @@ module.exports = {
 	},
 	deleteSchedule: async (request, response) => {
 		try {
-			// console.log("OKE DELETE BERJALAN...");
 			const id = request.params.id;
 			const scheduleID = await scheduleModel.GetDetailSchedule(id);
 			if (scheduleID.length < 1) {

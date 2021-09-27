@@ -73,6 +73,24 @@ module.exports = {
 				}
 			});
 		}),
+	createSeat: (data) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"INSERT INTO seatBooking SET ?",
+				data,
+				(error, results) => {
+					if (!error) {
+						const newSeat = {
+							id_seatBooking: results.insertId,
+							...data,
+						};
+						resolve(newSeat);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+		}),
 	updateBooking: (data, id) =>
 		new Promise((resolve, reject) => {
 			connection.query(

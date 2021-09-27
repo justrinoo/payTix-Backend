@@ -3,30 +3,16 @@ const helperWrapper = require("../../helpers/wrapper");
 module.exports = {
 	getAllMovie: async (request, response) => {
 		try {
-			// console.log(request.query);
-			// pagination
-			let {
-				page,
-				limit,
-				searchName,
-				sortName = "ASC",
-				sortDate = "DESC",
-			} = request.query;
+			let { page, limit, searchName, sort = "ASC" } = request.query;
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
-			sortName = sortName === "" ? "ASC" : sortName;
-			sortDate = sortDate === "" ? "DESC" : sortDate;
-			// OFFSET ?
-			// page 1, limit 3 = offset 0
-			// page 2, limit 3 = offset 3
-			// dst ...
+			sort = sort === "" ? "ASC" : sort;
 			const offset = page * limit - limit;
 			const totalData = await movieModel.getCountMovie();
 
 			let results = await movieModel.getMovieByFilter(
 				searchName,
-				sortName,
-				sortDate,
+				sort,
 				limit,
 				offset
 			);
@@ -39,7 +25,6 @@ module.exports = {
 					allMovie
 				);
 			}
-			// console.log(newResults);
 			let totalPage = Math.ceil(totalData / limit);
 
 			const pageInfo = {
@@ -56,13 +41,18 @@ module.exports = {
 				};
 				newDataMovie.push(setNewData);
 			}
-
+			const totalSearch = {
+				page,
+				totalPage: newDataMovie.length,
+				limit,
+				totalData,
+			};
 			return helperWrapper.response(
 				response,
 				200,
 				"Berhasil mendapatkan data sesuai pencarian!",
 				newDataMovie,
-				pageInfo
+				totalSearch
 			);
 		} catch (error) {
 			return helperWrapper.response(
@@ -93,7 +83,6 @@ module.exports = {
 					null
 				);
 			} else {
-				// console.log(results);
 				return helperWrapper.response(
 					response,
 					200,
@@ -112,7 +101,6 @@ module.exports = {
 	},
 	postMovie: async (request, response) => {
 		try {
-			// console.log(request.body);
 			const {
 				title,
 				category,
@@ -173,7 +161,6 @@ module.exports = {
 				"Berhasil mengubah data movie!",
 				result
 			);
-			// console.log(result);
 		} catch (error) {
 			return helperWrapper.response(
 				response,
