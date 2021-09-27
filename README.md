@@ -1,7 +1,7 @@
 ## payTix
 
 ### Documentation
-See the application endpoint documentation on postman [View Documentation](https://web.postman.co/workspace/3b5693d5-8e1b-4e2a-8284-c0626ccafbc6/documentation/10726334-cfc7d767-ca08-42c6-aad2-a04708f6d960)
+See the application endpoint documentation on postman [View Documentation](https://documenter.getpostman.com/view/10726334/UUxzA7Hc)
 #### Note : Select Environment Postman, choose <b>Ticketing</b>
 
 ## Installation
