@@ -41,18 +41,13 @@ module.exports = {
 				};
 				newDataMovie.push(setNewData);
 			}
-			const totalSearch = {
-				page,
-				totalPage: newDataMovie.length,
-				limit,
-				totalData,
-			};
+
 			return helperWrapper.response(
 				response,
 				200,
 				"Berhasil mendapatkan data sesuai pencarian!",
 				newDataMovie,
-				totalSearch
+				pageInfo
 			);
 		} catch (error) {
 			return helperWrapper.response(

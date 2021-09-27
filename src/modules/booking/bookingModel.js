@@ -57,7 +57,6 @@ module.exports = {
 					}
 				}
 			);
-			console.log(query.sql);
 		}),
 	createBooking: (posts) =>
 		new Promise((resolve, reject) => {

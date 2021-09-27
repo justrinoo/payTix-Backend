@@ -1,6 +1,5 @@
 const helperResponse = require("../../helpers/wrapper");
 const bookingModel = require("./bookingModel");
-// helperResponse.response(response, 400, `Bad Request : ${error.message}`, null);
 module.exports = {
 	detailByBookingId: async function (request, response) {
 		try {
@@ -61,29 +60,30 @@ module.exports = {
 					null
 				);
 			}
+			const newDataUserId = [];
+			checkUserId.forEach((newData) => {
+				let filterBy = newDataUserId.filter((value) => {
+					return value.id === newData.id;
+				});
+				if (filterBy.length > 0) {
+					// data dari filternya lebih dari 0
+					let filterByIndex = newDataUserId.indexOf(filterBy[[0]]);
+					newDataUserId[filterByIndex].seat = newDataUserId[
+						filterByIndex
+					].seat.concat(newData.seat);
+				} else {
+					if (typeof newData.seat === "string") {
+						newData.seat = [newData.seat];
+						newDataUserId.push(newData);
+					}
+				}
+			});
 
-			let newData = [];
-			let uniqData = {};
-			let dataSeat = [];
-			for (let value in checkUserId) {
-				propId = checkUserId[value]["id"];
-				propSeat = checkUserId[value]["seat"];
-				const data = (uniqData[propId] = checkUserId[value]);
-				dataSeat.push(propSeat);
-				uniqData[propId] = { ...data, seat: dataSeat };
-			}
-			for (let newDataUserById in uniqData) {
-				const newDataUserDataById = {
-					...uniqData[newDataUserById],
-					seat: dataSeat,
-				};
-				newData.push(newDataUserDataById);
-			}
 			return helperResponse.response(
 				response,
 				200,
 				"Data Booking Berdasarkan User, ditemukan!",
-				newData
+				newDataUserId
 			);
 		} catch (error) {
 			helperResponse.response(
@@ -128,7 +128,6 @@ module.exports = {
 	},
 	createPostBooking: async function (request, response) {
 		try {
-			// console.log(request.body);
 			const {
 				userId,
 				movieId,
@@ -158,7 +157,6 @@ module.exports = {
 			const resultPostBooking = await bookingModel.createBooking(
 				newDataPostBooking
 			);
-			// console.log(resultPostBooking);
 
 			const dataListSeat = { ...resultPostBooking };
 			const id_booking = dataListSeat.id;
@@ -221,7 +219,6 @@ module.exports = {
 				"Data Booking berhasil diubah!",
 				newData
 			);
-			// console.log("Berhasil mengubah data booking =>", test);
 		} catch (error) {
 			helperResponse.response(
 				response,
