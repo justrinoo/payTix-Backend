@@ -1,8 +1,12 @@
 const movieModel = require("./movieModel");
 const helperWrapper = require("../../helpers/wrapper");
+const redis = require("../../config/redis");
+const deleteFile = require("../../helpers/uploads/deleteFile");
+
 module.exports = {
 	getAllMovie: async (request, response) => {
 		try {
+			// console.log(request.decodeToken);
 			let { page, limit, searchName, sort = "ASC" } = request.query;
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
@@ -17,9 +21,20 @@ module.exports = {
 				limit,
 				offset
 			);
-
+			const pageInfo = {
+				page,
+				totalPage,
+				limit,
+				totalData,
+			};
 			const allMovie = await movieModel.getAllMovie();
+
 			if (results.length < 1) {
+				redis.setex(
+					`getMovie:all`,
+					3600,
+					JSON.stringify({ allMovie, pageInfo })
+				);
 				return helperWrapper.response(
 					response,
 					200,
@@ -27,12 +42,7 @@ module.exports = {
 					allMovie
 				);
 			}
-			const pageInfo = {
-				page,
-				totalPage,
-				limit,
-				totalData,
-			};
+
 			if (searchName === "") {
 				searchName = helperWrapper.response(
 					response,
@@ -51,6 +61,12 @@ module.exports = {
 				};
 				newDataMovie.push(setNewData);
 			}
+
+			redis.setex(
+				`getMovie:${JSON.stringify(request.query)}`,
+				3600,
+				JSON.stringify({ newDataMovie, pageInfo })
+			);
 
 			return helperWrapper.response(
 				response,
@@ -72,6 +88,10 @@ module.exports = {
 		try {
 			const { id } = request.params;
 			const results = await movieModel.getMovieId(id);
+
+			// PROSES MENYIMPAN DATA KE REDIS
+			redis.setex(`getMovie:${id}`, 3600, JSON.stringify(results));
+
 			let newDataMovie = [];
 			for (const data in results) {
 				const setNewData = {
@@ -125,6 +145,7 @@ module.exports = {
 				directedBy,
 				casts,
 				synopsis,
+				image: request.file ? request.file.filename : null,
 			};
 			const results = await movieModel.postMovie(setData);
 			return helperWrapper.response(
@@ -154,18 +175,34 @@ module.exports = {
 					null
 				);
 			}
+
 			const body = request.body;
+			const newImage = request.file;
 			const setData = {
 				...body,
+				image: request.file ? newImage.filename : checkId[0].image,
 				updatedAt: new Date(Date.now()),
 			};
 			const result = await movieModel.updateMovie(setData, id);
-			return helperWrapper.response(
-				response,
-				200,
-				"Berhasil mengubah data movie!",
-				result
-			);
+			if (newImage) {
+				// jika upload image
+				// proses delete image
+				deleteFile(`public/uploads/movie/${checkId[0].image}`);
+				return helperWrapper.response(
+					response,
+					200,
+					"Berhasil mengubah data movie!",
+					result
+				);
+			} else {
+				// tidak upload gambar
+				return helperWrapper.response(
+					response,
+					200,
+					"Berhasil mengubah data movie!",
+					result
+				);
+			}
 		} catch (error) {
 			return helperWrapper.response(
 				response,
@@ -187,6 +224,8 @@ module.exports = {
 					null
 				);
 			}
+			deleteFile(`public/uploads/movie/${checkId[0].image}`);
+
 			const result = await movieModel.deleteMovie(id);
 			return helperWrapper.response(
 				response,

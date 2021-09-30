@@ -1,12 +1,42 @@
 const express = require("express");
 const Router = express.Router();
 const movieController = require("./movieController");
-
-// Router.get("/:id", movieController.getMovieByID); // dibacanya yang endpoint all
-Router.get("/", movieController.getAllMovie);
-Router.get("/:id", movieController.getMovieByID);
-Router.post("/", movieController.postMovie);
-Router.patch("/:id", movieController.updateMovie);
-Router.delete("/:id", movieController.deleteMovie);
+const middlewareAuth = require("../../middleware/auth");
+const middlewareRedis = require("../../middleware/redis");
+const middlewareUpload = require("../../middleware/uploadMovie");
+Router.get(
+	"/",
+	middlewareAuth.authentication,
+	middlewareRedis.getMovieRedis,
+	movieController.getAllMovie
+); // user & admin
+Router.get(
+	"/:id",
+	middlewareAuth.authentication,
+	middlewareRedis.getMovieByIdRedis,
+	movieController.getMovieByID
+); // user & admin
+Router.post(
+	"/",
+	middlewareAuth.authentication,
+	middlewareAuth.isAdmin,
+	middlewareRedis.clearDataMovieRedis,
+	middlewareUpload,
+	movieController.postMovie
+); // onlyAdmin
+Router.patch(
+	"/:id",
+	middlewareAuth.authentication,
+	middlewareAuth.isAdmin,
+	middlewareUpload,
+	movieController.updateMovie
+); // onlyAdmin
+Router.delete(
+	"/:id",
+	middlewareAuth.authentication,
+	middlewareRedis.clearDataMovieRedis,
+	middlewareAuth.isAdmin,
+	movieController.deleteMovie
+); // onlyAdmin
 
 module.exports = Router;

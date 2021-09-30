@@ -1,5 +1,6 @@
 const scheduleModel = require("./scheduleModel");
 const helperResponse = require("../../helpers/wrapper");
+const redis = require("../../config/redis");
 module.exports = {
 	getAllSchedule: async (request, response) => {
 		try {
@@ -11,7 +12,6 @@ module.exports = {
 			 * - search => name
 			 * - sortField => nameField
 			 */
-			const allSchedule = await scheduleModel.getAllSchedule();
 			let {
 				searchMovieId,
 				searchLocation,
@@ -22,10 +22,8 @@ module.exports = {
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
 			sort = sort === "" ? "ASC" : sort;
-			const offset = page * limit - limit;
-			const totalData = await scheduleModel.totalDataSchedule();
-			const totalPage = Math.ceil(totalData / limit);
 
+			const offset = page * limit - limit;
 			const results = await scheduleModel.getScheduleSearch(
 				searchMovieId,
 				searchLocation,
@@ -34,53 +32,53 @@ module.exports = {
 				sort
 			);
 
-			let pageInfo = {
+			const allSchedule = await scheduleModel.getAllSchedule();
+			searchMovieId = searchMovieId === "" ? allSchedule : searchMovieId;
+			searchLocation = searchLocation === "" ? allSchedule : searchLocation;
+			let totalData = await scheduleModel.totalDataSchedule(
+				searchMovieId,
+				searchLocation
+			);
+			let totalPage = Math.ceil(totalData / limit);
+			const pageInfo = {
 				page,
 				totalPage,
 				limit,
 				totalData,
 			};
-			if (searchLocation === "") {
-				searchLocation = helperResponse.response(
-					response,
-					200,
-					"Berhasil mendapatkan semua data!",
-					allSchedule,
-					pageInfo
-				);
-				return;
-			} else {
-				searchLocation;
-			}
-
-			if (searchMovieId === "") {
-				searchMovieId = helperResponse.response(
-					response,
-					404,
-					"Berhasil mendapatkan semua data!",
-					allSchedule
-				);
-				return;
-			} else {
-				searchMovieId;
-			}
-
 			if (results.length < 1) {
-				return helperResponse.response(
-					response,
-					200,
-					"Berhasil mendapatkan semua data!",
-					allSchedule
+				// Redis Schedule All Data
+				const pageAllData = {
+					page,
+					totalPage: page,
+					limit,
+					totalData: allSchedule.length,
+				};
+				redis.setex(
+					`getSchedule:all`,
+					3600,
+					JSON.stringify({ allSchedule, pageAllData })
 				);
-			} else {
 				return helperResponse.response(
 					response,
 					200,
-					`Berhasil mendapatkan data berdasarkan pencarian!`,
-					results,
-					pageInfo
+					"Berhasil mendapatkan semua data",
+					allSchedule,
+					pageAllData
 				);
 			}
+			redis.setex(
+				`getScheduleBy:${JSON.stringify(request.query)}`,
+				3600,
+				JSON.stringify({ results, pageInfo })
+			);
+			return helperResponse.response(
+				response,
+				200,
+				"berhasil mendapatkan data sesuai pencarian!",
+				results,
+				pageInfo
+			);
 		} catch (error) {
 			return helperResponse.response(
 				response,
@@ -107,7 +105,11 @@ module.exports = {
 				dateStart: results[0].dateStart.toLocaleDateString(),
 				dateEnd: results[0].dateEnd.toLocaleDateString(),
 			};
-
+			redis.setex(
+				`getScheduleById:${checkId}`,
+				3600,
+				JSON.stringify(newDataSchedule)
+			);
 			return helperResponse.response(
 				response,
 				200,
@@ -134,7 +136,7 @@ module.exports = {
 				location,
 				dateStart,
 				dateEnd,
-				time: time.split(" ").join(""),
+				time: [time.split(" ").join("")],
 			};
 			const results = await scheduleModel.createSchedule(dataSchedule);
 			return helperResponse.response(

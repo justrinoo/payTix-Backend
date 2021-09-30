@@ -9,14 +9,18 @@ const routerNavigation = require("./routes");
 const bodyParser = require("body-parser");
 const app = express();
 app.use(morgan("dev"));
+
 app.use(cors());
 app.options("*", cors());
+
 app.use(xss());
 app.use(helmet());
 app.use(compression());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use(express.static("public")); // untuk mengakses file di public
 const port = 3001;
 
 app.use("/", routerNavigation);

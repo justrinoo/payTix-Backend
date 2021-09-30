@@ -2,6 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const bookingControlller = require("./bookingController");
 
+// HANDLING USER ONLY!
 Router.get("/booking-id/:id", bookingControlller.detailByBookingId);
 Router.get("/user-id/:id", bookingControlller.detailByUserId);
 Router.get("/seat", bookingControlller.detailSeatBooking);
