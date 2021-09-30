@@ -1,10 +1,9 @@
 const multer = require("multer");
-const path = require("path");
 const helperResponse = require("../helpers/wrapper");
-
+const path = require("path");
 const storage = multer.diskStorage({
-	destination(reqeust, file, callback) {
-		callback(null, "public/uploads/movie");
+	destination(request, file, callback) {
+		callback(null, "public/uploads/user");
 	},
 	filename(request, file, callback) {
 		callback(

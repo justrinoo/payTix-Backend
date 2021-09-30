@@ -4,7 +4,7 @@ module.exports = {
 	getUserById: (id) =>
 		new Promise((resolve, reject) => {
 			connection.query(
-				"SELECT users.id,users.firstName,users.lastName,users.email,users.phoneNumber,users.role FROM users WHERE id = ?",
+				"SELECT users.id,users.firstName,users.lastName,users.email,users.phoneNumber,users.role,users.image FROM users WHERE id = ?",
 				id,
 				(error, results) => {
 					if (!error) {
@@ -43,6 +43,25 @@ module.exports = {
 						resolve(results);
 					} else {
 						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+			console.log(query.sql);
+		}),
+	updateImage: (image, userId) =>
+		new Promise((resolve, reject) => {
+			const query = connection.query(
+				"UPDATE users SET image = ? WHERE id = ?",
+				[image, userId],
+				(error) => {
+					if (!error) {
+						const newImage = {
+							id: userId,
+							image,
+						};
+						resolve(newImage);
+					} else {
+						reject(new Error(`Message  : ${error.message}`));
 					}
 				}
 			);

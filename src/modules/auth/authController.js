@@ -1,10 +1,10 @@
 const helperResponse = require("../../helpers/wrapper");
 const { v4: uuidv4 } = require("uuid");
 const authModel = require("./authModel");
-const userModel = require("../users/userModel");
 const jwt = require("jsonwebtoken");
 const redis = require("../../config/redis");
 const bcrypt = require("bcrypt");
+const nodemailer = require("nodemailer");
 module.exports = {
 	register: async (request, response) => {
 		try {
@@ -13,17 +13,20 @@ module.exports = {
 
 			// SET DATA
 			// ENCRYPT PASSWORD => bcrypt
-			const hashPassword = await bcrypt.hash(password, );
+			const hashPassword = await bcrypt.hash(password, 10);
+			const checkEmail = await authModel.getUserByEmail(email);
+
+			const newId = uuidv4();
 			const setData = {
-				id: uuidv4(),
+				id: newId,
 				firstName,
 				lastName,
 				phoneNumber,
 				email,
 				password: hashPassword,
+				image: request.file ? request.file.filename : null,
 				role: "user",
 			};
-			const checkEmail = await authModel.getUserByEmail(email);
 			// PROSES CHECK EMAIL SUDAH PERNAH DAFTAR DIDATABASE ATAU BELUM
 			if (checkEmail.length !== 0) {
 				return helperResponse.response(
@@ -33,11 +36,27 @@ module.exports = {
 					null
 				);
 			} else {
+				// verifikasi email
+				let transporter = nodemailer.createTransport({
+					host: "smtp.gmail.com",
+					port: 465,
+					secure: true,
+					auth: {
+						user: "test.spam.rino@gmail.com",
+						pass: "testdemoapp",
+					},
+				});
+				await transporter.sendMail({
+					from: "PayTix@gmail.com", // sender address
+					to: email, // list of receivers
+					subject: `Hey ${firstName}, Activated Your email please?`, // Subject line
+					html: `please verify your email in <a href="http://localhost:3001/auth/activate/${newId}">Here</a>`,
+				});
 				const newUsers = await authModel.register(setData);
 				return helperResponse.response(
 					response,
 					200,
-					"Success Registration!",
+					"Success Register!, Please verification your email!",
 					newUsers
 				);
 			}
@@ -59,6 +78,13 @@ module.exports = {
 					response,
 					404,
 					"Email not registed!",
+					null
+				);
+			} else if (checkEmail[0].status !== "active") {
+				return helperResponse.response(
+					response,
+					409,
+					"Please activated your email!",
 					null
 				);
 			}
@@ -144,6 +170,28 @@ module.exports = {
 			token = token.split(" ")[1];
 			redis.setex(`accessToken:${token}`, 3600 * 24, token);
 			return helperResponse.response(response, 200, "Success Logout!", null);
+		} catch (error) {
+			return helperResponse.response(
+				response,
+				400,
+				`Bad Request : ${error.message}`,
+				null
+			);
+		}
+	},
+	verivEmail: async (request, response) => {
+		try {
+			const userId = request.params.id;
+
+			// check email sudah aktif atau belum
+			const newStatus = "active";
+			const users = await authModel.activateEmail(newStatus, userId);
+			return helperResponse.response(
+				response,
+				"200",
+				"Yeayyy, Your email has been activated!",
+				users
+			);
 		} catch (error) {
 			return helperResponse.response(
 				response,

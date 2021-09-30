@@ -126,6 +126,7 @@ module.exports = {
 	},
 	postMovie: async (request, response) => {
 		try {
+			console.log(request.file);
 			const {
 				title,
 				category,

@@ -49,4 +49,21 @@ module.exports = {
 				}
 			);
 		}),
+	activateEmail: (status, id) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"UPDATE users SET status = ? WHERE id = ?",
+				[status, id],
+				(error) => {
+					if (!error) {
+						const newDataStatus = {
+							status,
+						};
+						resolve(newDataStatus);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+		}),
 };

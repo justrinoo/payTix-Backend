@@ -1,8 +1,7 @@
 const { existsSync, unlinkSync } = require("fs");
 const helperResponse = require("../wrapper");
-const deleteFile = (filePath) => {
-	// fs.existSync // MENGECEK KEBERADAAN FILE
-	if (existsSync("public/uploads/movie/")) {
+const deleteFileUser = (filePath) => {
+	if (existsSync("public/uploads/user/")) {
 		unlinkSync(filePath, (err) => {
 			if (err) {
 				return helperResponse.response(response, 400, err.message, null);
@@ -16,9 +15,6 @@ const deleteFile = (filePath) => {
 			null
 		);
 	}
-	// fs.unlink // MENGHAPUS FILE
-	// PROSES HAPUS GAMBAR DARI DIRECTORY PUBLIC/UPLOADS/MOVIE
-	// console.log("gambar terhapus...", filePath);
 };
 
-module.exports = deleteFile;
+module.exports = deleteFileUser;
