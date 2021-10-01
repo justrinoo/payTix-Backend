@@ -3,8 +3,8 @@ const { v4: uuidv4 } = require("uuid");
 const authModel = require("./authModel");
 const jwt = require("jsonwebtoken");
 const redis = require("../../config/redis");
-const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const bcrypt = require("bcrypt");
 module.exports = {
 	register: async (request, response) => {
 		try {
@@ -38,16 +38,16 @@ module.exports = {
 			} else {
 				// verifikasi email
 				let transporter = nodemailer.createTransport({
-					host: "smtp.gmail.com",
-					port: 465,
+					host: process.env.HOST_SMTP,
+					port: process.env.PORT_SMTP,
 					secure: true,
 					auth: {
-						user: "test.spam.rino@gmail.com",
-						pass: "testdemoapp",
+						user: process.env.EMAIL_AUTH_SMTP,
+						pass: process.env.PASS_AUTH_SMTP,
 					},
 				});
 				await transporter.sendMail({
-					from: "PayTix@gmail.com", // sender address
+					from: process.env.EMAIL_FROM, // sender address
 					to: email, // list of receivers
 					subject: `Hey ${firstName}, Activated Your email please?`, // Subject line
 					html: `please verify your email in <a href="http://localhost:3001/auth/activate/${newId}">Here</a>`,
