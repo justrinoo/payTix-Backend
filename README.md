@@ -25,17 +25,20 @@ Set up configuration for the .env Environment
 Create a .env file in the root directory of your project, For Example:
 
 ```sh
-DB_HOST=yourhost
-DB_USER=youruser
-DB_PASS=yourpassword
-DB_NAME=yourDatabaseName
+DB_HOST=localhost
+DB_USER=root
+DB_password=root
+DB_NAME=paytix
+
+JWT_SECRET=p4yt1x
+JWT_EXPIRED=24
 
 JWT_SECRET=yourSecretJWT
 JWT_EXPIRED=24h
 
 HOST_SMTP=smtp.gmail.com
 PORT_SMTP=465
-EMAIL_AUTH=yourEmailActiveInGmail
-PASS_AUTH=yourPasswordEmail
-EMAIL_FROM=fromEm
+EMAIL_AUTH_SMTP=test.spam.rino@gmail.com
+PASS_AUTH_SMTP=testdemoapp
+EMAIL_FROM=PayTix@gmail.com
 ```
