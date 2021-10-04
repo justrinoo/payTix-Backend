@@ -26,12 +26,14 @@ Router.patch(
 	"/update/:id",
 	authMiddleware.authentication,
 	authMiddleware.isAdmin,
+	redisMiddleware.clearScheduleRedis,
 	scheduleController.updateSchedule
 );
 Router.delete(
 	"/delete/:id",
 	authMiddleware.authentication,
 	authMiddleware.isAdmin,
+	redisMiddleware.clearScheduleRedis,
 	scheduleController.deleteSchedule
 );
 

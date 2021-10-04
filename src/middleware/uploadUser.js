@@ -24,9 +24,10 @@ const upload = multer({
 			path.extname(file.originalname) !== ".jpg" &&
 			path.extname(file.originalname) !== ".jpeg"
 		) {
-			callback(new Error("Upload file harus berupa png, jpg, dan jpeg"));
+			callback(new Error("Upload file harus berupa png, jpg, dan jpeg"), false);
+		} else {
+			callback(null, true);
 		}
-		callback(null, true);
 	},
 }).single("image");
 

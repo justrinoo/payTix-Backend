@@ -30,35 +30,64 @@ module.exports = {
 		try {
 			const userId = request.decodeToken.id;
 			const body = request.body;
-			const setBody = { ...body };
 			const user = await userModel.getUserById(userId);
-			if (user.length < 1) {
+			const setBody = {
+				...body,
+				image: request.file ? request.file.filename : user[0].image,
+			};
+			if (user[0].id !== userId) {
 				return helperResponse.response(response, 404, "user not found!", null);
 			}
-			// proses update profile
 			const newDataProfile = await userModel.updateProfile(setBody, userId);
-			if (user[0].email === newDataProfile.email) {
+			// proses update profile
+
+			if (user[0].image === null) {
 				return helperResponse.response(
 					response,
-					409,
-					"email already exist!",
-					null
+					200,
+					"Success Update Profile!",
+					newDataProfile
 				);
+			} else {
+				if (user[0].email === newDataProfile.email) {
+					deleteFileUser(`public/uploads/user/${user[0].image}`);
+					return helperResponse.response(
+						response,
+						409,
+						"email already exist!",
+						null
+					);
+				}
+				if (user[0].phoneNumber === newDataProfile.phoneNumber) {
+					deleteFileUser(`public/uploads/user/${user[0].image}`);
+					return helperResponse.response(
+						response,
+						409,
+						"phone number already in use!",
+						null
+					);
+				} else {
+					if (
+						request.file &&
+						fs.existsSync(`public/uploads/user/${user[0].image}`)
+					) {
+						deleteFileUser(`public/uploads/user/${user[0].image}`);
+						return helperResponse.response(
+							response,
+							200,
+							"Success Update Profile!",
+							newDataProfile
+						);
+					} else {
+						return helperResponse.response(
+							response,
+							200,
+							"Success Update Profile!",
+							newDataProfile
+						);
+					}
+				}
 			}
-			if (user[0].phoneNumber === newDataProfile.phoneNumber) {
-				return helperResponse.response(
-					response,
-					409,
-					"phone number already in use!",
-					null
-				);
-			}
-			return helperResponse.response(
-				response,
-				200,
-				"Success Update Profile!",
-				newDataProfile
-			);
 		} catch (error) {
 			return helperResponse.response(
 				response,
@@ -118,14 +147,6 @@ module.exports = {
 					);
 				}
 			}
-
-			// const newImage = await userModel.updateImage(dataImage, userId);
-			// return helperResponse.response(
-			// 	response,
-			// 	200,
-			// 	"Success update image user",
-			// 	newImage
-			// );
 		} catch (error) {
 			return helperResponse.response(
 				response,

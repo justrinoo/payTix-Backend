@@ -2,7 +2,7 @@ const movieModel = require("./movieModel");
 const helperWrapper = require("../../helpers/wrapper");
 const redis = require("../../config/redis");
 const deleteFile = require("../../helpers/uploads/deleteFile");
-
+const { existsSync } = require("fs");
 module.exports = {
 	getAllMovie: async (request, response) => {
 		try {
@@ -126,7 +126,6 @@ module.exports = {
 	},
 	postMovie: async (request, response) => {
 		try {
-			console.log(request.file);
 			const {
 				title,
 				category,
@@ -149,6 +148,7 @@ module.exports = {
 				image: request.file ? request.file.filename : null,
 			};
 			const results = await movieModel.postMovie(setData);
+
 			return helperWrapper.response(
 				response,
 				201,
@@ -185,7 +185,7 @@ module.exports = {
 				updatedAt: new Date(Date.now()),
 			};
 			const result = await movieModel.updateMovie(setData, id);
-			if (newImage) {
+			if (newImage && existsSync(`public/uploads/movie/${checkId[0].image}`)) {
 				// jika upload image
 				// proses delete image
 				deleteFile(`public/uploads/movie/${checkId[0].image}`);
@@ -225,15 +225,24 @@ module.exports = {
 					null
 				);
 			}
-			deleteFile(`public/uploads/movie/${checkId[0].image}`);
 
 			const result = await movieModel.deleteMovie(id);
-			return helperWrapper.response(
-				response,
-				200,
-				`Berhasil menghapus movie!`,
-				result
-			);
+			if (existsSync(`public/uploads/movie/${checkId[0].image}`)) {
+				deleteFile(`public/uploads/movie/${checkId[0].image}`);
+				return helperWrapper.response(
+					response,
+					200,
+					`Berhasil menghapus movie!`,
+					result
+				);
+			} else {
+				return helperWrapper.response(
+					response,
+					200,
+					`Berhasil menghapus movie!`,
+					result
+				);
+			}
 		} catch (error) {
 			return helperWrapper.response(
 				response,

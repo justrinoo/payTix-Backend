@@ -68,7 +68,7 @@ module.exports = {
 				);
 			}
 			redis.setex(
-				`getScheduleBy:${JSON.stringify(request.query)}`,
+				`getSchedule:${JSON.stringify(request.query)}`,
 				3600,
 				JSON.stringify({ results, pageInfo })
 			);
@@ -106,7 +106,7 @@ module.exports = {
 				dateEnd: results[0].dateEnd.toLocaleDateString(),
 			};
 			redis.setex(
-				`getScheduleById:${checkId}`,
+				`getSchedule:${checkId}`,
 				3600,
 				JSON.stringify(newDataSchedule)
 			);

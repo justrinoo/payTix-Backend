@@ -16,9 +16,6 @@ const deleteFile = (filePath) => {
 			null
 		);
 	}
-	// fs.unlink // MENGHAPUS FILE
-	// PROSES HAPUS GAMBAR DARI DIRECTORY PUBLIC/UPLOADS/MOVIE
-	// console.log("gambar terhapus...", filePath);
 };
 
 module.exports = deleteFile;

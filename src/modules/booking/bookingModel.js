@@ -1,5 +1,4 @@
 const connection = require("../../config/mysql");
-// 	reject(new Error(`Message : ${error.message}`));
 module.exports = {
 	listBooking: (bookingId) =>
 		new Promise((resolve, reject) => {
@@ -7,6 +6,20 @@ module.exports = {
 				`SELECT id, userId,bookingId,dateBooking,timeBooking,totalTicket,totalPayment,paymentMethod,statusPayment, seat,dateSchedule,timeSchedule  FROM booking JOIN seatBooking ON booking.id=seatBooking.bookingId WHERE booking.id = ${bookingId}`,
 				//SELECT id, userId, dateBooking,timeBooking,totalTicket,totalPayment,paymentMethod,statusPayment,seat FROM booking JOIN seatbooking ON booking.id = seatbooking.bookingId WHERE booking.id = 3
 				[bookingId],
+				(error, results) => {
+					if (!error) {
+						resolve(results);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+		}),
+	detailBookingById: (id) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"SELECT * FROM booking WHERE id = ?",
+				id,
 				(error, results) => {
 					if (!error) {
 						resolve(results);
@@ -118,5 +131,23 @@ module.exports = {
 					reject(new Error(`Message : ${error.message}`));
 				}
 			});
+		}),
+	ticketAlready: (statusTicket, id) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"UPDATE booking SET statusUsed = ? WHERE id = ?",
+				[statusTicket, id],
+				(error) => {
+					if (!error) {
+						const setNewData = {
+							id,
+							statusTicket,
+						};
+						resolve(setNewData);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
 		}),
 };

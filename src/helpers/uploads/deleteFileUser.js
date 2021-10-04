@@ -7,6 +7,7 @@ const deleteFileUser = (filePath) => {
 				return helperResponse.response(response, 400, err.message, null);
 			}
 		});
+		return false;
 	} else {
 		return helperResponse.response(
 			response,

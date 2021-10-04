@@ -20,8 +20,8 @@ Router.post(
 	"/",
 	middlewareAuth.authentication,
 	middlewareAuth.isAdmin,
-	middlewareRedis.clearDataMovieRedis,
 	middlewareUpload,
+	middlewareRedis.clearDataMovieRedis,
 	movieController.postMovie
 ); // onlyAdmin
 Router.patch(

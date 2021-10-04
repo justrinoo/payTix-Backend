@@ -10,6 +10,7 @@ Router.get(
 	userController.getDashboard
 );
 Router.get("/", middlewareAuth.authentication, userController.detailUserById);
+
 Router.patch(
 	"/update-image",
 	middlewareAuth.authentication,
@@ -19,6 +20,7 @@ Router.patch(
 Router.patch(
 	"/update-profile",
 	middlewareAuth.authentication,
+	middlewareUpload,
 	userController.updateProfile
 );
 

@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const redis = require("../../config/redis");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
+const userModel = require("../users/userModel");
 module.exports = {
 	register: async (request, response) => {
 		try {
@@ -50,7 +51,9 @@ module.exports = {
 					from: process.env.EMAIL_FROM, // sender address
 					to: email, // list of receivers
 					subject: `Hey ${firstName}, Activated Your email please?`, // Subject line
-					html: `please verify your email in <a href="http://localhost:3001/auth/activate/${newId}">Here</a>`,
+					html: `please verify your email in <a href="http://${request.get(
+						"host"
+					)}/auth/activate/${newId}">Here</a>`,
 				});
 				const newUsers = await authModel.register(setData);
 				return helperResponse.response(
@@ -106,8 +109,8 @@ module.exports = {
 			const payload = checkEmail[0];
 			delete payload.password;
 			// accesstoken
-			const token = jwt.sign({ ...payload }, "SECRET", {
-				expiresIn: "24h",
+			const token = jwt.sign({ ...payload }, process.env.JWT_SECRET, {
+				expiresIn: `${process.env.JWT_EXPIRED}h`,
 			});
 
 			return helperResponse.response(response, 200, "Success Login", {
@@ -125,7 +128,7 @@ module.exports = {
 	},
 	updatePassword: async (request, response) => {
 		try {
-			const userId = request.params.id;
+			const userId = request.decodeToken.id;
 			const { newPassword, confirmPassword } = request.body;
 			const checkUser = await userModel.getUserById(userId);
 
@@ -134,7 +137,6 @@ module.exports = {
 			}
 
 			if (newPassword === confirmPassword) {
-				// console.log("update data...");
 				const newHashPassword = await bcrypt.hash(confirmPassword, 10);
 				const newDataPassword = await authModel.updateByPassword(
 					newHashPassword,
@@ -150,10 +152,9 @@ module.exports = {
 				return helperResponse.response(
 					response,
 					409,
-					"Gagal mengupdate password!",
+					"password tidak sama!",
 					null
 				);
-				// console.log("gagal mengupadte password!");
 			}
 		} catch (error) {
 			return helperResponse.response(

@@ -35,7 +35,7 @@ module.exports = {
 		}),
 	dashboard: (movieId, location, premier) =>
 		new Promise((resolve, reject) => {
-			const query = connection.query(
+			connection.query(
 				"SELECT MONTH(b.createdAt) as month, SUM(b.totalPayment) as total FROM booking b JOIN schedule ON b.scheduleId=schedule.id_schedule WHERE b.movieId = ? AND schedule.location LIKE ? AND schedule.premiere LIKE ? AND YEAR(b.createdAt) = YEAR(CURDATE()) GROUP BY month(b.createdAt)",
 				[movieId, `%${location}%`, `%${premier}%`],
 				(error, results) => {
@@ -46,7 +46,6 @@ module.exports = {
 					}
 				}
 			);
-			console.log(query.sql);
 		}),
 	updateImage: (image, userId) =>
 		new Promise((resolve, reject) => {

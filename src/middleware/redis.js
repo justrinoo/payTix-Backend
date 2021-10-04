@@ -38,11 +38,12 @@ module.exports = {
 				redis.get(`getMovie:all`, (error, results) => {
 					if (!error && results !== null) {
 						const newResult = JSON.parse(results);
+						console.log(newResult);
 						return helperResponse.response(
 							response,
 							200,
 							"Berhasil mengambil semua data movie!",
-							newResult.result,
+							newResult.allMovie,
 							newResult.pageInfo
 						);
 					} else {
@@ -66,7 +67,7 @@ module.exports = {
 	// REDIS SCHEDULE
 	getScheduleRedis: (request, response, next) => {
 		redis.get(
-			`getScheduleBy:${JSON.stringify(request.query)}`,
+			`getSchedule:${JSON.stringify(request.query)}`,
 			(error, results) => {
 				if (!error && results !== null) {
 					// console.log(JSON.parse(results));
@@ -79,20 +80,17 @@ module.exports = {
 						newDataSchedule.pageInfo
 					);
 				} else {
-					redis.get(`getSchedule:all`, (error, results) => {
-						const newAllData = JSON.parse(results);
-						if (!error && results !== null) {
-							return helperResponse.response(
-								response,
-								200,
-								"berhasil mendapatkan semua data!",
-								newAllData.allSchedule,
-								newAllData.pageAllData
-							);
-						} else {
-							next();
-						}
-					});
+					// redis.get(`getSchedule:all`, (error, results) => {
+					// 	const newAllData = JSON.parse(results);
+					// 	if (!error && results !== null) {
+					// 		return helperResponse.response(
+					// 			response,
+					// 			200,
+					// 			"berhasil mendapatkan semua data!",
+					// 			newAllData.allSchedule,
+					// 			newAllData.pageAllData
+					// 		);
+					next();
 				}
 			}
 		);
@@ -100,7 +98,7 @@ module.exports = {
 
 	getScheduleByIdRedis: (request, response, next) => {
 		const id = request.params.id;
-		redis.get(`getScheduleById:${id}`, (error, results) => {
+		redis.get(`getSchedule:${id}`, (error, results) => {
 			if (!error && results !== null) {
 				const newDataSchedule = JSON.parse(results);
 				return helperResponse.response(
@@ -112,6 +110,17 @@ module.exports = {
 			} else {
 				next();
 			}
+		});
+	},
+
+	clearScheduleRedis: (request, response, next) => {
+		redis.keys(`getSchedule:*`, (error, results) => {
+			if (results.length > 0) {
+				results.forEach((value) => {
+					redis.del(value);
+				});
+			}
+			next();
 		});
 	},
 };

@@ -19,7 +19,7 @@ module.exports = {
 					null
 				);
 			}
-			jwt.verify(token, "SECRET", (error, results) => {
+			jwt.verify(token, process.env.JWT_SECRET, (error, results) => {
 				if (error) {
 					return helperResponse.response(response, 403, error.message);
 				}

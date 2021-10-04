@@ -256,4 +256,46 @@ module.exports = {
 			);
 		}
 	},
+	ticketAlreadyUsed: async (request, response) => {
+		try {
+			const bookingId = request.params.id;
+			const checkBooking = await bookingModel.detailBookingById(bookingId);
+			if (checkBooking.length < 1) {
+				return helperResponse.response(
+					response,
+					404,
+					"Booking not found!",
+					null
+				);
+			}
+
+			let userUsedTicket = "alreadyUsed";
+			const newDataTicket = await bookingModel.ticketAlready(
+				userUsedTicket,
+				bookingId
+			);
+			if (checkBooking[0].statusUsed === "active") {
+				return helperResponse.response(
+					response,
+					200,
+					"Success Change status, Ticket has been already used!",
+					newDataTicket
+				);
+			} else {
+				return helperResponse.response(
+					response,
+					409,
+					"Ticket sudah terpakai!",
+					checkBooking
+				);
+			}
+			// console.log(newDataTicket);
+		} catch (error) {
+			return helperResponse.response(
+				response,
+				400,
+				`Bad Request : ${error.message}`
+			);
+		}
+	},
 };
