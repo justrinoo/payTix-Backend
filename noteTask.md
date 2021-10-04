@@ -7,7 +7,7 @@ Schedule Task
 - Update Profile => ACCEPTED
 - Get User by Id User => ACCEPTED
 - Dashboard Profile => Request : movieId,location,premiere => ACCEPTED
-  VERIVIKASI EMAIL => ACCEOTED
+  VERIVIKASI EMAIL => ACCEPTED
   Implementasi Redis
   -Schedule => ACCEPTED
 - Update Image User => ACCEPTED

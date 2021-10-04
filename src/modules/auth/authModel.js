@@ -9,6 +9,7 @@ module.exports = {
 						id: results.insertId,
 						...data,
 					};
+					delete newDataResults.password;
 					delete newDataResults.phoneNumber;
 					delete newDataResults.role;
 					resolve(newDataResults);

@@ -185,7 +185,7 @@ module.exports = {
 				updatedAt: new Date(Date.now()),
 			};
 			const result = await movieModel.updateMovie(setData, id);
-			if (newImage && existsSync(`public/uploads/movie/${checkId[0].image}`)) {
+			if (newImage) {
 				// jika upload image
 				// proses delete image
 				deleteFile(`public/uploads/movie/${checkId[0].image}`);
@@ -227,7 +227,7 @@ module.exports = {
 			}
 
 			const result = await movieModel.deleteMovie(id);
-			if (existsSync(`public/uploads/movie/${checkId[0].image}`)) {
+			if (existsSync(`${checkId[0].image}`)) {
 				deleteFile(`public/uploads/movie/${checkId[0].image}`);
 				return helperWrapper.response(
 					response,

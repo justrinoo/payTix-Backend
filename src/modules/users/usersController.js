@@ -2,7 +2,7 @@ const helperResponse = require("../../helpers/wrapper");
 const userModel = require("./userModel");
 const moment = require("moment");
 const fs = require("fs");
-const deleteFileUser = require("../../helpers/uploads/deleteFileUser");
+const deleteFile = require("../../helpers/uploads/deleteFile");
 module.exports = {
 	detailUserById: async (request, response) => {
 		try {
@@ -50,7 +50,7 @@ module.exports = {
 				);
 			} else {
 				if (user[0].email === newDataProfile.email) {
-					deleteFileUser(`public/uploads/user/${user[0].image}`);
+					deleteFile(`public/uploads/user/${user[0].image}`);
 					return helperResponse.response(
 						response,
 						409,
@@ -59,7 +59,7 @@ module.exports = {
 					);
 				}
 				if (user[0].phoneNumber === newDataProfile.phoneNumber) {
-					deleteFileUser(`public/uploads/user/${user[0].image}`);
+					deleteFile(`public/uploads/user/${user[0].image}`);
 					return helperResponse.response(
 						response,
 						409,
@@ -67,11 +67,8 @@ module.exports = {
 						null
 					);
 				} else {
-					if (
-						request.file &&
-						fs.existsSync(`public/uploads/user/${user[0].image}`)
-					) {
-						deleteFileUser(`public/uploads/user/${user[0].image}`);
+					if (request.file && fs.existsSync(`${user[0].image}`)) {
+						deleteFile(`public/uploads/user/${user[0].image}`);
 						return helperResponse.response(
 							response,
 							200,
@@ -128,8 +125,8 @@ module.exports = {
 				);
 			} else {
 				// jika image di public sama di db itu sama
-				if (fs.existsSync(`public/uploads/user/${checkImage[0].image}`)) {
-					deleteFileUser(`public/uploads/user/${checkImage[0].image}`);
+				if (fs.existsSync(`${checkImage[0].image}`)) {
+					deleteFile(`public/uploads/user/${checkImage[0].image}`);
 					return helperResponse.response(
 						response,
 						200,
@@ -138,7 +135,7 @@ module.exports = {
 					);
 				} else {
 					// jika image di public nya itu beda sama di db
-					deleteFileUser(`public/uploads/user/${checkImage[0].image}`);
+					deleteFile(`public/uploads/user/${checkImage[0].image}`);
 					return helperResponse.response(
 						response,
 						200,
