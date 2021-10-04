@@ -38,7 +38,7 @@ JWT_EXPIRED=24h
 
 HOST_SMTP=smtp.gmail.com
 PORT_SMTP=465
-EMAIL_AUTH_SMTP=test.spam.rino@gmail.com
-PASS_AUTH_SMTP=testdemoapp
-EMAIL_FROM=PayTix@gmail.com
+EMAIL_AUTH_SMTP=youraccountGmail
+PASS_AUTH_SMTP=yourPasswordGmail
+EMAIL_FROM=yourFromEmail
 ```
