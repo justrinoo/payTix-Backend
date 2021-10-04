@@ -20,7 +20,15 @@ npm run dev
 Set up configuration for the .env Environment 
 
 Create a .env file in the root directory of your project, For Example:
-- DB_HOST=yourhost
-- DB_USER=youruser
-- DB_PASS=yourpassword
-- DB_NAME=yourDatabaseName
+```sh
+DB_HOST=yourhost
+DB_USER=youruser
+DB_PASS=yourpassword
+DB_NAME=yourDatabaseName
+
+HOST_SMTP=smtp.gmail.com
+PORT_SMTP=465
+EMAIL_AUTH=yourEmailActiveInGmail
+PASS_AUTH=yourPasswordEmail
+EMAIL_FROM=fromEm
+```
