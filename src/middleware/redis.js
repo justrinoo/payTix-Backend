@@ -25,7 +25,6 @@ module.exports = {
 			// Berdasarkan Pencarian
 			if (!error && results !== null) {
 				const newResult = JSON.parse(results);
-				console.log(newResult);
 				return helperResponse.response(
 					response,
 					200,
@@ -38,7 +37,6 @@ module.exports = {
 				redis.get(`getMovie:all`, (error, results) => {
 					if (!error && results !== null) {
 						const newResult = JSON.parse(results);
-						console.log(newResult);
 						return helperResponse.response(
 							response,
 							200,
@@ -70,7 +68,6 @@ module.exports = {
 			`getSchedule:${JSON.stringify(request.query)}`,
 			(error, results) => {
 				if (!error && results !== null) {
-					// console.log(JSON.parse(results));
 					const newDataSchedule = JSON.parse(results);
 					return helperResponse.response(
 						response,

@@ -30,6 +30,10 @@ DB_USER=yourDBUSER
 DB_password=yourDBPASS
 DB_NAME=yourDBNAME
 
+REDIS_HOST=yourRedisHost
+REDIS_PASSWORD=yourRedisPassword
+REDIS_PORT=yourRedisPort
+
 JWT_SECRET=yourSecretJWT
 JWT_EXPIRED=expJWT
 
