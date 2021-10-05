@@ -7,7 +7,6 @@ module.exports = {
 				`SELECT * FROM schedule WHERE movie_id = ? AND location LIKE ? ORDER BY price ${sort} LIMIT ? OFFSET ?`,
 				[searchMoveId, `%${searchLocation}%`, limit, offset, sort],
 				(error, results) => {
-					console.log(searchLocation);
 					if (!error) {
 						resolve(results);
 					} else {

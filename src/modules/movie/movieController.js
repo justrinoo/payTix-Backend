@@ -6,7 +6,6 @@ const { existsSync } = require("fs");
 module.exports = {
 	getAllMovie: async (request, response) => {
 		try {
-			// console.log(request.decodeToken);
 			let { page, limit, searchName, sort = "ASC" } = request.query;
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;

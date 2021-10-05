@@ -289,7 +289,6 @@ module.exports = {
 					checkBooking
 				);
 			}
-			// console.log(newDataTicket);
 		} catch (error) {
 			return helperResponse.response(
 				response,

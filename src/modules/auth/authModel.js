@@ -42,7 +42,6 @@ module.exports = {
 						const newPassword = {
 							id: id,
 						};
-						// console.log(password);
 						resolve(newPassword);
 					} else {
 						reject(new Error(`Message : ${error.message}`));

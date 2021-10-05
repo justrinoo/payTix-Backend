@@ -49,7 +49,7 @@ module.exports = {
 		}),
 	updateImage: (image, userId) =>
 		new Promise((resolve, reject) => {
-			const query = connection.query(
+			connection.query(
 				"UPDATE users SET image = ? WHERE id = ?",
 				[image, userId],
 				(error) => {
@@ -64,6 +64,5 @@ module.exports = {
 					}
 				}
 			);
-			console.log(query.sql);
 		}),
 };
