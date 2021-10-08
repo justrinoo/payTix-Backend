@@ -36,6 +36,8 @@ REDIS_PORT=yourRedisPort
 
 JWT_SECRET=yourSecretJWT
 JWT_EXPIRED=expJWT
+REFRESH_TOKEN_JWT_SECRET=yourRefreshTokenSecret
+REFRESH_TOKEN_EXPIRED=yourRefreshTokenExpired
 
 HOST_SMTP=smtp.gmail.com
 PORT_SMTP=465
