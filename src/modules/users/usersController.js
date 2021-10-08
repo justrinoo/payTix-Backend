@@ -2,7 +2,9 @@ const helperResponse = require("../../helpers/wrapper");
 const userModel = require("./userModel");
 const moment = require("moment");
 const fs = require("fs");
+const redis = require("../../config/redis");
 const deleteFile = require("../../helpers/uploads/deleteFile");
+const jwt = require("jsonwebtoken");
 module.exports = {
 	detailUserById: async (request, response) => {
 		try {
@@ -49,15 +51,6 @@ module.exports = {
 					newDataProfile
 				);
 			} else {
-				if (user[0].email === newDataProfile.email) {
-					deleteFile(`public/uploads/user/${user[0].image}`);
-					return helperResponse.response(
-						response,
-						409,
-						"email already exist!",
-						null
-					);
-				}
 				if (user[0].phoneNumber === newDataProfile.phoneNumber) {
 					deleteFile(`public/uploads/user/${user[0].image}`);
 					return helperResponse.response(
@@ -76,6 +69,7 @@ module.exports = {
 							newDataProfile
 						);
 					} else {
+						deleteFile(`public/uploads/user/${user[0].image}`);
 						return helperResponse.response(
 							response,
 							200,
@@ -184,6 +178,117 @@ module.exports = {
 				response,
 				`Bad Request : ${error.message}`,
 				null
+			);
+		}
+	},
+	refreshToken: async (request, response) => {
+		// try {
+		// Generate Token ke redis
+		// 	const refreshToken = request.body.refreshToken;
+		// 	redis.get(`refreshToken:${refreshToken}`, (error, results) => {
+		// 		// proses token bisa digunakan atau tidak
+		// 		// datanya ada di redis
+		// 		if (!error && results !== null) {
+		// 			return helperResponse.response(
+		// 				response,
+		// 				403,
+		// 				"Anda tidak dapat menggunakan token lagi!"
+		// 			);
+		// 		}
+		// 		jwt.verify(
+		// 			refreshToken,
+		// 			process.env.REFRESH_TOKEN_JWT_SECRET,
+		// 			(error, dataUser) => {
+		// 				if (error) {
+		// 					return helperResponse.response(response, 403, error.message);
+		// 				}
+		// 				delete dataUser.iat;
+		// 				delete dataUser.exp;
+		// 				// generate new token
+		// 				const token = jwt.sign({ ...dataUser }, process.env.JWT_SECRET, {
+		// 					expiresIn: process.env.JWT_EXPIRED,
+		// 				});
+		// 				// generate new refreshToken
+		// 				const newRefreshToken = jwt.sign(
+		// 					{ ...dataUser },
+		// 					process.env.REFRESH_TOKEN_JWT_SECRET,
+		// 					{
+		// 						expiresIn: process.env.REFRESH_TOKEN_EXPIRED,
+		// 					}
+		// 				);
+
+		// 				// response new Token
+		// 				redis.setex(
+		// 					`refreshToken:${refreshToken}`,
+		// 					3600 * 24,
+		// 					refreshToken
+		// 				);
+		// 				return helperResponse.response(
+		// 					response,
+		// 					200,
+		// 					"Success Generate New Token!",
+		// 					{ token, newRefreshToken }
+		// 				);
+		// 			}
+		// 		);
+		// 	});
+		// } catch (error) {
+		// 	return helperResponse.response(
+		// 		response,
+		// 		400,
+		// 		`Bad Request : ${error.message}`
+		// 	);
+		// }
+
+		// Generate token ke database
+		try {
+			const refreshToken = request.body.refreshToken;
+			const payload = jwt.verify(
+				refreshToken,
+				process.env.REFRESH_TOKEN_JWT_SECRET
+			);
+			delete payload.iat;
+			delete payload.exp;
+
+			const dataToken = await userModel.getToken();
+			dataToken.filter(async (data) => {
+				if (data.userId === payload.id && data.refreshToken === refreshToken) {
+					// generate token baru
+					// token baru
+					const newToken = jwt.sign({ ...payload }, process.env.JWT_SECRET, {
+						expiresIn: process.env.JWT_EXPIRED,
+					});
+					// refreshToken baru
+					const newRefreshToken = jwt.sign(
+						{ ...payload },
+						process.env.REFRESH_TOKEN_JWT_SECRET,
+						{ expiresIn: process.env.REFRESH_TOKEN_EXPIRED }
+					);
+					const oldDataToken = await userModel.updateToken(
+						newRefreshToken,
+						data.userId
+					);
+					if (oldDataToken.refreshToken !== refreshToken) {
+						return helperResponse.response(
+							response,
+							200,
+							"Berhasil generate token baru!",
+							{ token: newToken, refreshToken: newRefreshToken }
+						);
+					}
+				} else {
+					return helperResponse.response(
+						response,
+						403,
+						"Anda tidak dapat menggunakan token lagi!"
+					);
+				}
+			});
+		} catch (error) {
+			return helperResponse.response(
+				response,
+				400,
+				`Bad Request : ${error.message}`
 			);
 		}
 	},

@@ -11,6 +11,12 @@ Router.get(
 );
 Router.get("/", middlewareAuth.authentication, userController.detailUserById);
 
+Router.post(
+	"/refresh-token",
+	middlewareAuth.authentication,
+	userController.refreshToken
+);
+
 Router.patch(
 	"/update-image",
 	middlewareAuth.authentication,

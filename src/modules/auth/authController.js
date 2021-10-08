@@ -3,8 +3,8 @@ const { v4: uuidv4 } = require("uuid");
 const authModel = require("./authModel");
 const jwt = require("jsonwebtoken");
 const redis = require("../../config/redis");
-const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
+const { emailServiceTransport } = require("../../helpers/email/sendEmail");
 const userModel = require("../users/userModel");
 module.exports = {
 	register: async (request, response) => {
@@ -37,24 +37,17 @@ module.exports = {
 					null
 				);
 			} else {
-				// verifikasi email
-				let transporter = nodemailer.createTransport({
-					host: process.env.HOST_SMTP,
-					port: process.env.PORT_SMTP,
-					secure: true,
-					auth: {
-						user: process.env.EMAIL_AUTH_SMTP,
-						pass: process.env.PASS_AUTH_SMTP,
+				const setDataEmail = {
+					to: email,
+					subject: "Email Verification",
+					template: "index",
+					data: {
+						firstname: "Rino",
+						callbackEndPoint: `${process.env.BASE_URL_ACTIVATE_EMAIL}/${newId}`,
 					},
-				});
-				await transporter.sendMail({
-					from: process.env.EMAIL_FROM, // sender address
-					to: email, // list of receivers
-					subject: `Hey ${firstName}, Activated Your email please?`, // Subject line
-					html: `please verify your email in <a href="http://${request.get(
-						"host"
-					)}/auth/activate/${newId}">Here</a>`,
-				});
+				};
+				await emailServiceTransport(setDataEmail);
+
 				const newUsers = await authModel.register(setData);
 				return helperResponse.response(
 					response,
@@ -110,12 +103,28 @@ module.exports = {
 			delete payload.password;
 			// accesstoken
 			const token = jwt.sign({ ...payload }, process.env.JWT_SECRET, {
-				expiresIn: `${process.env.JWT_EXPIRED}h`,
+				expiresIn: `${process.env.JWT_EXPIRED}`,
 			});
+
+			// refresh token
+			const refreshToken = jwt.sign(
+				{ ...payload },
+				process.env.REFRESH_TOKEN_JWT_SECRET,
+				{ expiresIn: process.env.REFRESH_TOKEN_EXPIRED }
+			);
+
+			// store token to database
+			const storeToken = {
+				userId: payload.id,
+				refreshToken,
+			};
+
+			await userModel.createRefreshToken(storeToken);
 
 			return helperResponse.response(response, 200, "Success Login", {
 				id: payload.id,
 				token,
+				refreshToken,
 			});
 		} catch (error) {
 			return helperResponse.response(
@@ -168,9 +177,21 @@ module.exports = {
 	logout: async (request, response) => {
 		try {
 			let token = request.headers.authorization;
+			const userId = request.decodeToken.id;
 			token = token.split(" ")[1];
 			redis.setex(`accessToken:${token}`, 3600 * 24, token);
-			return helperResponse.response(response, 200, "Success Logout!", null);
+			const dataToken = await userModel.getUserById(userId);
+			if (dataToken[0].id === userId) {
+				await userModel.deleteToken(userId);
+				return helperResponse.response(response, 200, "Success Logout!", null);
+			} else {
+				return helperResponse.response(
+					response,
+					404,
+					"maaf user tidak ditemukan!",
+					null
+				);
+			}
 		} catch (error) {
 			return helperResponse.response(
 				response,

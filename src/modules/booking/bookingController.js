@@ -1,5 +1,9 @@
 const helperResponse = require("../../helpers/wrapper");
 const bookingModel = require("./bookingModel");
+const htmlPdf = require("html-pdf");
+const fs = require("fs");
+const ejs = require("ejs");
+const path = require("path");
 module.exports = {
 	detailByBookingId: async function (request, response) {
 		try {
@@ -173,8 +177,6 @@ module.exports = {
 				};
 				await bookingModel.createSeat(newDataSeatBooking);
 			});
-
-			// REFACTOR DATA BOOKING
 
 			helperResponse.response(
 				response,

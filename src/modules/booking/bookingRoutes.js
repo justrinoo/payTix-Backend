@@ -23,6 +23,7 @@ Router.get(
 	middlewareAuth.isUser,
 	bookingControlller.detailSeatBooking
 );
+
 Router.post(
 	"/create",
 	middlewareAuth.isUser,
