@@ -65,4 +65,56 @@ module.exports = {
 				}
 			);
 		}),
+	createRefreshToken: (data) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"INSERT INTO refreshTokens SET ?",
+				data,
+				(error, results) => {
+					if (!error) {
+						resolve(data);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+		}),
+	getToken: () =>
+		new Promise((resolve, reject) => {
+			connection.query("SELECT * FROM refreshTokens", (error, results) => {
+				if (!error) {
+					resolve(results);
+				} else {
+					reject(new Error(`Message : ${error.message}`));
+				}
+			});
+		}),
+	updateToken: (token, userId) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"UPDATE refreshTokens SET refreshToken = ? WHERE userId = ?",
+				[token, userId],
+				(error, results) => {
+					if (!error) {
+						resolve(token);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+		}),
+	deleteToken: (userId) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"DELETE FROM refreshTokens WHERE userId = ?",
+				userId,
+				(error) => {
+					if (!error) {
+						resolve(userId);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+		}),
 };

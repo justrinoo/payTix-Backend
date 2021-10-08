@@ -14,4 +14,20 @@ Schedule Task
 - Handle Multer = - Limit - Exentions File => ACCEPTED
 - Ticket Already In Use => ACCEPTED
 
-- Refresh Token => Optional
+- setUp env => -production and deployment
+- Refresh Token => ACCEPTED
+
+- new Field Booking => {
+- statusTicked
+
+  - Pending
+  - Success
+  - Failure
+
+- Url Redirect
+- }
+
+- Midtrans => {
+  - Server Key
+  - Client Key
+    }

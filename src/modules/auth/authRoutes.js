@@ -13,6 +13,7 @@ Router.patch(
 	middlewareAuth.authentication,
 	authController.updatePassword
 );
-Router.post("/logout", authController.logout);
+Router.post("/logout", middlewareAuth.authentication, authController.logout);
+// Router.post("/refresh-token", authController.refreshToken);
 
 module.exports = Router;
