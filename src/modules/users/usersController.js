@@ -251,7 +251,6 @@ module.exports = {
 			delete payload.exp;
 
 			const dataToken = await userModel.getToken();
-
 			dataToken.filter(async (data) => {
 				if (data.userId === payload.id && data.refreshToken === refreshToken) {
 					// generate token baru

@@ -150,18 +150,4 @@ module.exports = {
 				}
 			);
 		}),
-	exportTicketByIdBooking: (id) =>
-		new Promise((resolve, reject) => {
-			connection.query(
-				"SELECT booking.id,booking.movieId,booking.scheduleId,booking.dateBooking,booking.timeBooking,booking.totalTicket,booking.totalPayment,booking.paymentMethod,booking.statusPayment,seatbooking.seat, title, image FROM booking JOIN seatbooking ON booking.id = seatbooking.bookingId JOIN movie ON booking.movieId = movie.id WHERE booking.id = ?",
-				id,
-				(error, results) => {
-					if (!error) {
-						resolve(results);
-					} else {
-						reject(new Error(`Message : ${error.message}`));
-					}
-				}
-			);
-		}),
 };

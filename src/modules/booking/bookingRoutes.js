@@ -23,11 +23,7 @@ Router.get(
 	middlewareAuth.isUser,
 	bookingControlller.detailSeatBooking
 );
-Router.get(
-	"/export-ticket/:id",
-	middlewareAuth.authentication,
-	bookingControlller.exportTicket
-);
+
 Router.post(
 	"/create",
 	middlewareAuth.isUser,
