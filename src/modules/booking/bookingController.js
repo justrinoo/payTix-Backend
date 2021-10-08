@@ -1,7 +1,9 @@
 const helperResponse = require("../../helpers/wrapper");
 const bookingModel = require("./bookingModel");
+const { transactions, notification } = require("../../helpers/midtrans");
+const { v4: uuid } = require("uuid");
 const htmlPdf = require("html-pdf");
-const fs = require("fs");
+// const fs = require("fs");
 const ejs = require("ejs");
 const path = require("path");
 module.exports = {
@@ -54,13 +56,13 @@ module.exports = {
 	},
 	detailByUserId: async function (request, response) {
 		try {
-			const { id } = request.params;
+			const { id } = request.decodeToken;
 			const checkUserId = await bookingModel.detailBookingUserId(id);
 			if (checkUserId.length < 1) {
 				return helperResponse.response(
 					response,
 					404,
-					`maaf data dengan id : ${id}, tidak ditemukan!`,
+					`maaf data dengan id : ${id}, belum melakukan booking!`,
 					null
 				);
 			}
@@ -132,26 +134,24 @@ module.exports = {
 	},
 	createPostBooking: async function (request, response) {
 		try {
+			const user_id = request.decodeToken.id;
 			const {
-				userId,
 				movieId,
 				scheduleId,
 				dateBooking,
 				timeBooking,
 				seat: totalTicket,
-				paymentMethod,
-				statusPayment,
 			} = request.body;
 			const setDataPostBooking = {
-				userId,
+				id: uuid(),
+				userId: user_id,
 				movieId,
 				scheduleId,
 				dateBooking,
 				timeBooking,
 				totalTicket,
 				totalPayment: (totalPayment = 10 * totalTicket.length),
-				paymentMethod,
-				statusPayment,
+				statusPayment: "Pending",
 			};
 			const newDataPostBooking = {
 				...setDataPostBooking,
@@ -159,12 +159,17 @@ module.exports = {
 			};
 
 			const resultPostBooking = await bookingModel.createBooking(
+				newDataPostBooking.id,
 				newDataPostBooking
 			);
 
 			const dataListSeat = { ...resultPostBooking };
 			const id_booking = dataListSeat.id;
 
+			const transaction = await transactions(
+				id_booking,
+				resultPostBooking.totalPayment
+			);
 			const results = dataListSeat;
 			totalTicket.forEach(async (totalTicket) => {
 				let newDataSeatBooking = {
@@ -178,12 +183,10 @@ module.exports = {
 				await bookingModel.createSeat(newDataSeatBooking);
 			});
 
-			helperResponse.response(
-				response,
-				201,
-				"Booking berhasil dibuat!",
-				results
-			);
+			helperResponse.response(response, 201, "Booking berhasil dibuat!", {
+				results,
+				redirect_url: transaction,
+			});
 		} catch (error) {
 			helperResponse.response(
 				response,
@@ -291,6 +294,89 @@ module.exports = {
 					checkBooking
 				);
 			}
+		} catch (error) {
+			return helperResponse.response(
+				response,
+				400,
+				`Bad Request : ${error.message}`
+			);
+		}
+	},
+	exportTicketUserBooking: async function (request, response) {
+		try {
+			const { id } = request.params;
+			const fileName = `ticket-${id}.pdf`;
+			// const userBooking = await bookingModel.getExportTicketByIdBooking(id);
+			const data = {
+				namaMovie: "Spiderman baju item",
+				Date: "07 Juy",
+				Time: "02:00pm",
+				Category: "PG-13",
+				Count: "3 Pieces",
+				Seats: "C4,C5,C6",
+				Price: "$30.00",
+			};
+
+			ejs.renderFile(
+				path.resolve("./src/templates/pdf/index.ejs"),
+				{ data },
+				(error, results) => {
+					if (error) {
+						console.log(`Error Find File`, error);
+					} else {
+						let options = {
+							height: "11.25in",
+							width: "8.5in",
+						};
+						htmlPdf
+							.create(results, options)
+							.toFile(
+								path.resolve(`./public/generate/${fileName}`),
+								(error, results) => {
+									console.log(results);
+									if (error) {
+										return helperResponse.response(
+											response,
+											400,
+											`Bad Request : ${error.message}`
+										);
+									}
+									return helperResponse.response(
+										response,
+										200,
+										"Success Generate Ticket!",
+										{
+											file_ticket: `http://${request.get(
+												"host"
+											)}/generate/${fileName}`,
+										}
+									);
+								}
+							);
+					}
+				}
+			);
+
+			// console.log(userBooking);
+		} catch (error) {
+			return helperResponse.response(
+				response,
+				400,
+				`Bad Request : ${error.message}`
+			);
+		}
+	},
+	notificationMidtrans: async function (request, response) {
+		try {
+			console.log("NOTIF MIDTRANS IS RUNNING!");
+			const requestMidtrans = request.body;
+			const dataTransaction = await notification(requestMidtrans);
+			return helperResponse.response(
+				response,
+				200,
+				"Success Finish Transactions!",
+				dataTransaction
+			);
 		} catch (error) {
 			return helperResponse.response(
 				response,

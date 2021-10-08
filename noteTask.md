@@ -14,20 +14,17 @@ Schedule Task
 - Handle Multer = - Limit - Exentions File => ACCEPTED
 - Ticket Already In Use => ACCEPTED
 
-- setUp env => -production and deployment
+- setUp env => -production and deployment => ACCEPTED
 - Refresh Token => ACCEPTED
 
-- new Field Booking => {
-- statusTicked
-
-  - Pending
-  - Success
-  - Failure
-
-- Url Redirect
-- }
-
-- Midtrans => {
-  - Server Key
-  - Client Key
+- Midtrans Features
+- Create Transactions With Midtrans Field => {
+  - SUCCESS => ACCEPTED
+  - FAILURE => ACCEPTED
+  - PENDING => ACCEPTED
     }
+
+-Verification Email Expired
+-Update Profile Verification Email
+-Get Movie By DateTime - DateEnd (Range)
+-Export Ticket Field and Design

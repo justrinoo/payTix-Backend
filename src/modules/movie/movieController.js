@@ -224,7 +224,6 @@ module.exports = {
 					null
 				);
 			}
-
 			const result = await movieModel.deleteMovie(id);
 			if (existsSync(`${checkId[0].image}`)) {
 				deleteFile(`public/uploads/movie/${checkId[0].image}`);

@@ -71,12 +71,11 @@ module.exports = {
 				}
 			);
 		}),
-	createBooking: (posts) =>
+	createBooking: (id, posts) =>
 		new Promise((resolve, reject) => {
-			connection.query("INSERT INTO booking SET ?", posts, (error, results) => {
+			connection.query("INSERT INTO booking SET ?", posts, (error) => {
 				if (!error) {
 					const newResultsPost = {
-						id: results.insertId,
 						...posts,
 					};
 					resolve(newResultsPost);
@@ -144,6 +143,25 @@ module.exports = {
 							statusTicket,
 						};
 						resolve(setNewData);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+		}),
+	updateTransactionMidtrans: (paymentMethod, statusPayment, id) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"UPDATE booking SET paymentMethod = ?, statusPayment = ? WHERE id = ?",
+				[paymentMethod, statusPayment, id],
+				(error) => {
+					if (!error) {
+						const newDataTransactions = {
+							id,
+							paymentMethod,
+							statusPayment,
+						};
+						resolve(newDataTransactions);
 					} else {
 						reject(new Error(`Message : ${error.message}`));
 					}

@@ -14,6 +14,5 @@ Router.patch(
 	authController.updatePassword
 );
 Router.post("/logout", middlewareAuth.authentication, authController.logout);
-// Router.post("/refresh-token", authController.refreshToken);
 
 module.exports = Router;

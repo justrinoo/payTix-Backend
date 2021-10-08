@@ -8,13 +8,20 @@ Router.get(
 	middlewareAuth.isUser,
 	bookingControlller.detailByBookingId
 );
+
+Router.get(
+	"/export-ticket/:id",
+	middlewareAuth.isUser,
+	bookingControlller.exportTicketUserBooking
+);
+
 Router.get(
 	"/used-ticket/:id",
 	middlewareAuth.isAdmin,
 	bookingControlller.ticketAlreadyUsed
 );
 Router.get(
-	"/user-id/:id",
+	"/user-id",
 	middlewareAuth.isUser,
 	bookingControlller.detailByUserId
 );
@@ -30,4 +37,9 @@ Router.post(
 	bookingControlller.createPostBooking
 );
 
+Router.post(
+	"/midtrans-noitification",
+	middlewareAuth.authentication,
+	bookingControlller.notificationMidtrans
+);
 module.exports = Router;
