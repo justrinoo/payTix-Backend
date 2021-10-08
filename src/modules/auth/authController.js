@@ -46,8 +46,8 @@ module.exports = {
 						callbackEndPoint: `${process.env.BASE_URL_ACTIVATE_EMAIL}/${newId}`,
 					},
 				};
-				await emailServiceTransport(setDataEmail);
-
+				const verifEmail = await emailServiceTransport(setDataEmail);
+				console.log(verifEmail);
 				const newUsers = await authModel.register(setData);
 				return helperResponse.response(
 					response,
