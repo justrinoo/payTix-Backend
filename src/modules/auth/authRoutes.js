@@ -6,7 +6,7 @@ const middlewareUpload = require("../../middleware/uploadUser");
 const middlewareAuth = require("../../middleware/auth");
 // HANDLE ONLY USER!
 Router.post("/register", middlewareUpload, authController.register);
-Router.get("/activate/:id", authController.verivEmail);
+Router.get("/activate/:token/:id", authController.verivEmail);
 Router.post("/login", authController.login);
 Router.patch(
 	"/update-password",

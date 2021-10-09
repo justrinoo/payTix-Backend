@@ -168,4 +168,18 @@ module.exports = {
 				}
 			);
 		}),
+	getExportTicketByIdBooking: (id) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"SELECT userId,bookingId,dateBooking,timeBooking,totalTicket,totalPayment,paymentMethod,statusPayment, seat,dateSchedule,timeSchedule, title  FROM booking JOIN seatBooking ON booking.id=seatBooking.bookingId JOIN movie ON movie.id=booking.movieId WHERE booking.id = ?",
+				id,
+				(error, results) => {
+					if (!error) {
+						resolve(results);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+		}),
 };

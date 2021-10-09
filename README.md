@@ -25,6 +25,9 @@ Set up configuration for the .env Environment
 Create a .env file in the root directory of your project, For Example:
 
 ```sh
+PORT=yourPORTapplication
+BASE_URL_ACTIVATE_EMAIL=YourBASEURL/auth/activate
+
 DB_HOST=yourDBHOST
 DB_USER=yourDBUSER
 DB_password=yourDBPASS
@@ -36,8 +39,10 @@ REDIS_PORT=yourRedisPort
 
 JWT_SECRET=yourSecretJWT
 JWT_EXPIRED=expJWT
-REFRESH_TOKEN_JWT_SECRET=yourRefreshTokenSecret
+REFRESH_TOKEN_JWT_SECRET=yourJWT_RefreshTokenSecret
 REFRESH_TOKEN_EXPIRED=yourRefreshTokenExpired
+
+JWT_EXPIRED_ACTIVATE_EMAIL=yourExpiredJWTActivateEmail
 
 HOST_SMTP=smtp.gmail.com
 PORT_SMTP=465

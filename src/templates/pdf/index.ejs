@@ -1,81 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,500;0,600;0,700;0,800;1,400;1,700;1,800&display=swap"
+  rel="stylesheet">
 
 <head>
   <style>
-    /* body {
+    /* CSS */
+    body {
+      font-family: 'Montserrat', sans-serif;
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       padding: 0;
     }
 
     .container {
-      padding: 3rem;
+      padding: 10rem;
     }
 
     .top-ticket {
+      align-items: center;
       color: #fff;
-      padding: 24px;
-      width: 50%;
-      background: #5F2EEA;
+      border-radius: 10px 10px 0px 0px;
       display: flex;
-      border-radius: 8px 8px 0px 0px;
+      padding: 1rem;
+      background-color: #5F2EEA;
+      justify-content: space-between;
+    }
+
+    .top-ticket h1 {
+      margin: 1rem;
     }
 
     .content-ticket {
-      padding: 24px;
-      width: 50%;
-      box-shadow: 4px 4px 4px 4px rgb(246, 246, 246);
+      padding: 1.5rem;
     }
 
-    .description {
-      font-size: 1rem;
+    .list-schedule {
       display: flex;
+      flex-wrap: wrap;
     }
 
-    .ticket-left {
-      margin-left: 2rem;
-      width: 70%;
+    .space-list {
+      margin-top: 16px;
+      flex: 0 0 26%;
     }
 
-    .ticket-right {
-      margin-left: 2rem;
-      width: 50%;
-    } */
+    p {
+      opacity: 0.6;
+    }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
-    <div class="top-ticket">
-      <div class="ticket-left">Left</div>
-      <div class="ticket-right">Right</div>
-    </div>
-    <div class="content-ticket">
-      <div style="margin-left: 2rem">
-        <p>Movie</p>
-        <p><%= data.namaMovie %></p>
-      </div>
-
-      <div class="description">
-        <div style="padding: 2rem">
-          <p>Date</p>
-          <p><%= data.Date %></p>
-        </div>
-        <div style="padding: 2rem">
-          <p>Time</p>
-          <p><%= data.Time %></p>
-        </div>
-        <div style="padding: 2rem">
-          <p>Category</p>
-          <p><%= data.Category %></p>
+  <!-- Ticket -->
+  <main>
+    <div class="container">
+      <div class="top-ticket">
+        <!-- Top -->
+        <div class="space-ticket-left">
+          <h1>PayTix</h1>
         </div>
 
       </div>
-    </div>
-  </div>
+      <div class="content-ticket">
+        <!-- Content -->
+        <div class="space-list">
+          <p>Movie</p>
+          <span><%= newDataBookingTicket.title %> </span>
+        </div>
+        <div class="list-schedule">
+          <div class="space-list">
+            <p>Date</p>
+            <span><%= newDataBookingTicket.dateBooking %> </span>
+          </div>
+          <div class="space-list">
+            <p>Time</p>
+            <span><%= newDataBookingTicket.timeBooking %> </span>
+          </div>
+          <div class="space-list">
+            <p>Count</p>
+            <span><%= newDataBookingTicket.totalTicket %> </span>
+          </div>
+          <div> <a href="<%= newDataBookingTicket.linkTicket %> ">Link Barcode</a></div>
+          <div class="space-list">
+            <p>Seats</p>
+            <span><%= newDataBookingTicket.seat %> </span>
+          </div>
+          <div class="space-list">
+            <p>Price</p>
+            <span><%= newDataBookingTicket.totalPayment %> </span>
+          </div>
+        </div>
 
+
+      </div>
+  </main>
 </body>
 
 </html>

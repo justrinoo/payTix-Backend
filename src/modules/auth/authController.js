@@ -18,6 +18,7 @@ module.exports = {
 			const checkEmail = await authModel.getUserByEmail(email);
 
 			const newId = uuidv4();
+
 			const setData = {
 				id: newId,
 				firstName,
@@ -28,6 +29,7 @@ module.exports = {
 				image: request.file ? request.file.filename : null,
 				role: "user",
 			};
+
 			// PROSES CHECK EMAIL SUDAH PERNAH DAFTAR DIDATABASE ATAU BELUM
 			if (checkEmail.length !== 0) {
 				return helperResponse.response(
@@ -37,17 +39,22 @@ module.exports = {
 					null
 				);
 			} else {
+				const dataEmail = setData.email;
+				const token = jwt.sign({ dataEmail }, "RAHASIA", {
+					expiresIn: process.env.JWT_EXPIRED_ACTIVATE_EMAIL,
+				});
 				const setDataEmail = {
 					to: email,
 					subject: "Email Verification",
 					template: "index",
 					data: {
 						firstname: "Rino",
-						callbackEndPoint: `${process.env.BASE_URL_ACTIVATE_EMAIL}/${newId}`,
+						callbackEndPoint: `${process.env.BASE_URL_ACTIVATE_EMAIL}/${token}/${newId}`,
 					},
 				};
-				const verifEmail = await emailServiceTransport(setDataEmail);
-				console.log(verifEmail);
+
+				await emailServiceTransport(setDataEmail);
+
 				const newUsers = await authModel.register(setData);
 				return helperResponse.response(
 					response,
@@ -201,19 +208,28 @@ module.exports = {
 			);
 		}
 	},
-	verivEmail: async (request, response) => {
+	verivEmail: (request, response) => {
 		try {
 			const userId = request.params.id;
-
+			const token = request.params.token;
 			// check email sudah aktif atau belum
 			const newStatus = "active";
-			const users = await authModel.activateEmail(newStatus, userId);
-			return helperResponse.response(
-				response,
-				"200",
-				"Yeayyy, Your email has been activated!",
-				users
-			);
+			jwt.verify(token, "RAHASIA", async (error, results) => {
+				if (error) {
+					return helperResponse.response(
+						response,
+						400,
+						"Masa waktu aktifasi sudah habis, silahkan refresh aktifasi lagi!"
+					);
+				}
+				const users = await authModel.activateEmail(newStatus, userId);
+				return helperResponse.response(
+					response,
+					200,
+					"Yeayyy, Your email has been activated!",
+					users
+				);
+			});
 		} catch (error) {
 			return helperResponse.response(
 				response,

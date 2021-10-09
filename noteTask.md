@@ -7,9 +7,8 @@ Schedule Task
 - Update Profile => ACCEPTED
 - Get User by Id User => ACCEPTED
 - Dashboard Profile => Request : movieId,location,premiere => ACCEPTED
-  VERIVIKASI EMAIL => ACCEPTED
-  Implementasi Redis
-  -Schedule => ACCEPTED
+- VERIVIKASI EMAIL => ACCEPTED
+- Implementasi Redis Schedule => ACCEPTED
 - Update Image User => ACCEPTED
 - Handle Multer = - Limit - Exentions File => ACCEPTED
 - Ticket Already In Use => ACCEPTED
@@ -18,13 +17,14 @@ Schedule Task
 - Refresh Token => ACCEPTED
 
 - Midtrans Features
-- Create Transactions With Midtrans Field => {
+- Create Transactions Using` Midtrans Field => {
   - SUCCESS => ACCEPTED
   - FAILURE => ACCEPTED
   - PENDING => ACCEPTED
     }
 
--Verification Email Expired
--Update Profile Verification Email
+-Verification Email Expired => ACCEPTED{
+BUT! => token expired get new token ? or daftar ulang ?
+}
 -Get Movie By DateTime - DateEnd (Range)
--Export Ticket Field and Design
+-Export Ticket Design => ACCEPTED

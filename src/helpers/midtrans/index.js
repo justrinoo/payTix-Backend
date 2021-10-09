@@ -39,7 +39,6 @@ module.exports = {
 					const fraudStatus = response.fraud_status;
 
 					if (transactionStatus == "capture") {
-						// kartu kredit
 						// 	// capture only applies to card transaction, which you need to check for the fraudStatus
 						if (fraudStatus == "challenge") {
 							// TODO set transaction status on your databaase to 'challenge'

@@ -3,9 +3,9 @@ const bookingModel = require("./bookingModel");
 const { transactions, notification } = require("../../helpers/midtrans");
 const { v4: uuid } = require("uuid");
 const htmlPdf = require("html-pdf");
-// const fs = require("fs");
 const ejs = require("ejs");
 const path = require("path");
+const moment = require("moment");
 module.exports = {
 	detailByBookingId: async function (request, response) {
 		try {
@@ -306,39 +306,47 @@ module.exports = {
 		try {
 			const { id } = request.params;
 			const fileName = `ticket-${id}.pdf`;
-			// const userBooking = await bookingModel.getExportTicketByIdBooking(id);
-			const data = {
-				namaMovie: "Spiderman baju item",
-				Date: "07 Juy",
-				Time: "02:00pm",
-				Category: "PG-13",
-				Count: "3 Pieces",
-				Seats: "C4,C5,C6",
-				Price: "$30.00",
-			};
+			const userBooking = await bookingModel.getExportTicketByIdBooking(id);
+			// join seat => ['A1', 'A2', 'A3']
 
+			const seatBooking = userBooking.map((value) => value.seat);
+			let newData = [];
+			userBooking.map((value) => {
+				const setNewData = {
+					...value,
+				};
+				newData.push(setNewData);
+			});
+			const newDataBooking = newData[0];
+
+			const newDataBookingTicket = {
+				...newDataBooking,
+				dateBooking: moment().format("DD MMM"),
+				timeBooking: moment().format("LT"),
+				seat: seatBooking,
+				linkTicket: `http://${request.get("host")}/booking/used-ticket/${
+					newDataBooking.bookingId
+				}`,
+			};
 			ejs.renderFile(
 				path.resolve("./src/templates/pdf/index.ejs"),
-				{ data },
+				{ newDataBookingTicket },
 				(error, results) => {
-					if (error) {
-						console.log(`Error Find File`, error);
-					} else {
+					if (!error) {
 						let options = {
 							height: "11.25in",
-							width: "8.5in",
+							width: "10.5in",
 						};
 						htmlPdf
 							.create(results, options)
 							.toFile(
 								path.resolve(`./public/generate/${fileName}`),
 								(error, results) => {
-									console.log(results);
 									if (error) {
 										return helperResponse.response(
 											response,
 											400,
-											`Bad Request : ${error.message}`
+											error.message
 										);
 									}
 									return helperResponse.response(
@@ -356,8 +364,6 @@ module.exports = {
 					}
 				}
 			);
-
-			// console.log(userBooking);
 		} catch (error) {
 			return helperResponse.response(
 				response,

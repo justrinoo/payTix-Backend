@@ -39,6 +39,7 @@ module.exports = {
 				if (error) {
 					reject(error);
 				} else {
+					console.log(info);
 					resolve(info.response);
 				}
 			});
