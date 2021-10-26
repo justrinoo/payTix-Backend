@@ -5,6 +5,7 @@ const fs = require("fs");
 const redis = require("../../config/redis");
 const deleteFile = require("../../helpers/uploads/deleteFile");
 const jwt = require("jsonwebtoken");
+const { emailServiceTransport } = require("../../helpers/email/sendEmail");
 module.exports = {
 	detailUserById: async (request, response) => {
 		try {
@@ -40,9 +41,22 @@ module.exports = {
 			if (user[0].id !== userId) {
 				return helperResponse.response(response, 404, "user not found!", null);
 			}
-			const newDataProfile = await userModel.updateProfile(setBody, userId);
 			// proses update profile
-
+			// const dataEmail = setBody.email;
+			// const token = jwt.sign({ dataEmail }, "RAHASIA", {
+			// 	expiresIn: process.env.JWT_EXPIRED_ACTIVATE_EMAIL,
+			// });
+			// const setDataEmail = {
+			// 	to: setBody.email,
+			// 	subject: "Email Verification",
+			// 	template: "index",
+			// 	data: {
+			// 		firstname: "Rino",
+			// 		callbackEndPoint: `${process.env.BASE_URL_ACTIVATE_EMAIL}/${token}/${userId}`,
+			// 	},
+			// };
+			// await emailServiceTransport(setDataEmail);
+			const newDataProfile = await userModel.updateProfile(setBody, userId);
 			if (user[0].image === null) {
 				return helperResponse.response(
 					response,
@@ -65,7 +79,7 @@ module.exports = {
 						return helperResponse.response(
 							response,
 							200,
-							"Success Update Profile!",
+							"Success update profile!!",
 							newDataProfile
 						);
 					} else {
@@ -73,7 +87,7 @@ module.exports = {
 						return helperResponse.response(
 							response,
 							200,
-							"Success Update Profile!",
+							"Success update profile!!",
 							newDataProfile
 						);
 					}

@@ -10,6 +10,11 @@ Router.get(
 	scheduleController.getAllSchedule
 );
 Router.get(
+	"/date",
+	authMiddleware.authentication,
+	scheduleController.getScheduleFilterByDateStartEnd
+);
+Router.get(
 	"/:id",
 	authMiddleware.authentication,
 	authMiddleware.isAdmin,

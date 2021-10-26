@@ -140,6 +140,7 @@ module.exports = {
 				scheduleId,
 				dateBooking,
 				timeBooking,
+				paymentMethod,
 				seat: totalTicket,
 			} = request.body;
 			const setDataPostBooking = {
@@ -150,6 +151,7 @@ module.exports = {
 				dateBooking,
 				timeBooking,
 				totalTicket,
+				paymentMethod,
 				totalPayment: (totalPayment = 10 * totalTicket.length),
 				statusPayment: "Pending",
 			};
@@ -166,10 +168,10 @@ module.exports = {
 			const dataListSeat = { ...resultPostBooking };
 			const id_booking = dataListSeat.id;
 
-			const transaction = await transactions(
-				id_booking,
-				resultPostBooking.totalPayment
-			);
+			// const transaction = await transactions(
+			// 	id_booking,
+			// 	resultPostBooking.totalPayment
+			// );
 			const results = dataListSeat;
 			totalTicket.forEach(async (totalTicket) => {
 				let newDataSeatBooking = {
@@ -185,7 +187,7 @@ module.exports = {
 
 			helperResponse.response(response, 201, "Booking berhasil dibuat!", {
 				results,
-				redirect_url: transaction,
+				// redirect_url: transaction,
 			});
 		} catch (error) {
 			helperResponse.response(

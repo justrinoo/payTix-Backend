@@ -20,13 +20,13 @@
     }
 
     .top-ticket {
-      align-items: center;
+      -webkit-align-items: center;
       color: #fff;
       border-radius: 10px 10px 0px 0px;
-      display: flex;
+      display: -webkit-flex;
       padding: 1rem;
       background-color: #5F2EEA;
-      justify-content: space-between;
+      -webkit-justify-content: space-between;
     }
 
     .top-ticket h1 {
@@ -38,17 +38,13 @@
     }
 
     .list-schedule {
-      display: flex;
-      flex-wrap: wrap;
+      display: -webkit-flex;
+      -webkit-flex-wrap: wrap;
     }
 
     .space-list {
       margin-top: 16px;
       flex: 0 0 26%;
-    }
-
-    p {
-      opacity: 0.6;
     }
   </style>
 </head>
@@ -84,7 +80,7 @@
             <p>Count</p>
             <span><%= newDataBookingTicket.totalTicket %> </span>
           </div>
-          <div> <a href="<%= newDataBookingTicket.linkTicket %> ">Link Barcode</a></div>
+
           <div class="space-list">
             <p>Seats</p>
             <span><%= newDataBookingTicket.seat %> </span>

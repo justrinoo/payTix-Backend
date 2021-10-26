@@ -99,4 +99,18 @@ module.exports = {
 				}
 			);
 		}),
+	getScheduleByDateStartAndEnd: (dateStart, dateEnd) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"SELECT * FROM schedule WHERE dateStart = ? AND dateEnd = ?",
+				[dateStart, dateEnd],
+				(error, results) => {
+					if (!error) {
+						resolve(results);
+					} else {
+						new Error(`Message : ${error.message}`);
+					}
+				}
+			);
+		}),
 };

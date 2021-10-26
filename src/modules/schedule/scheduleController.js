@@ -1,6 +1,7 @@
 const scheduleModel = require("./scheduleModel");
 const helperResponse = require("../../helpers/wrapper");
 const redis = require("../../config/redis");
+const moment = require("moment");
 module.exports = {
 	getAllSchedule: async (request, response) => {
 		try {
@@ -32,9 +33,25 @@ module.exports = {
 				sort
 			);
 
-			const allSchedule = await scheduleModel.getAllSchedule();
-			searchMovieId = searchMovieId === "" ? allSchedule : searchMovieId;
-			searchLocation = searchLocation === "" ? allSchedule : searchLocation;
+			const newDataResults = [];
+			results.map((value) => {
+				const oldData = {
+					...value,
+					dateStart: moment(value.dateStart).format("YYYY-MM-DD"),
+					time: value.time.split(","),
+				};
+				newDataResults.push(oldData);
+			});
+
+			let allSchedule = await scheduleModel.getAllSchedule();
+			allSchedule = [
+				allSchedule.map((value) => {
+					return { ...value, time: value.time.split(",") };
+				}),
+			];
+
+			searchMovieId = searchMovieId === "" ? " " : searchMovieId;
+			searchLocation = searchLocation === "" ? " " : searchLocation;
 			let totalData = await scheduleModel.totalDataSchedule(
 				searchMovieId,
 				searchLocation
@@ -66,19 +83,20 @@ module.exports = {
 					allSchedule,
 					pageAllData
 				);
+			} else {
+				redis.setex(
+					`getSchedule:${JSON.stringify(request.query)}`,
+					3600,
+					JSON.stringify({ newDataResults, pageInfo })
+				);
+				return helperResponse.response(
+					response,
+					200,
+					"berhasil mendapatkan data sesuai pencarian!",
+					newDataResults,
+					pageInfo
+				);
 			}
-			redis.setex(
-				`getSchedule:${JSON.stringify(request.query)}`,
-				3600,
-				JSON.stringify({ results, pageInfo })
-			);
-			return helperResponse.response(
-				response,
-				200,
-				"berhasil mendapatkan data sesuai pencarian!",
-				results,
-				pageInfo
-			);
 		} catch (error) {
 			return helperResponse.response(
 				response,
@@ -136,7 +154,7 @@ module.exports = {
 				location,
 				dateStart,
 				dateEnd,
-				time: [time.split(" ").join("")],
+				time: time.split(" ").join(""),
 			};
 			const results = await scheduleModel.createSchedule(dataSchedule);
 			return helperResponse.response(
@@ -212,6 +230,45 @@ module.exports = {
 				400,
 				`Bad Request : ${error.message}`,
 				null
+			);
+		}
+	},
+	getScheduleFilterByDateStartEnd: async (request, response) => {
+		try {
+			const { dateStart, dateEnd } = request.query;
+			let schedules = await scheduleModel.getScheduleByDateStartAndEnd(
+				dateStart,
+				dateEnd
+			);
+			const newDataSchedule = [];
+			schedules.map((value) => {
+				const setNewValue = {
+					...value,
+					time: value.time.split(","),
+					dateStart: moment(value.dateStart).format("YYYY-MM-DD"),
+					dateEnd: moment(value.dateEnd).format("YYYY-MM-DD"),
+				};
+				newDataSchedule.push(setNewValue);
+			});
+			if (newDataSchedule.length < 1) {
+				return helperResponse.response(
+					response,
+					404,
+					"Schedule not found!",
+					null
+				);
+			}
+			return helperResponse.response(
+				response,
+				200,
+				"Success Get Data By Date Start and Date End!",
+				newDataSchedule
+			);
+		} catch (error) {
+			return helperResponse.response(
+				response,
+				400,
+				`Bad Request ${error.message}`
 			);
 		}
 	},

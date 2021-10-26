@@ -3,6 +3,7 @@ const helperWrapper = require("../../helpers/wrapper");
 const redis = require("../../config/redis");
 const deleteFile = require("../../helpers/uploads/deleteFile");
 const { existsSync } = require("fs");
+const moment = require("moment");
 module.exports = {
 	getAllMovie: async (request, response) => {
 		try {
@@ -20,6 +21,7 @@ module.exports = {
 				limit,
 				offset
 			);
+			console.log(results);
 			const pageInfo = {
 				page,
 				totalPage,
@@ -27,29 +29,31 @@ module.exports = {
 				totalData,
 			};
 			const allMovie = await movieModel.getAllMovie();
-
 			if (results.length < 1) {
-				redis.setex(
-					`getMovie:all`,
-					3600,
-					JSON.stringify({ allMovie, pageInfo })
-				);
-				return helperWrapper.response(
-					response,
-					200,
-					"Berhasil mengambil semua data movie!",
-					allMovie
-				);
-			}
-
-			if (searchName === "") {
-				searchName = helperWrapper.response(
-					response,
-					200,
-					"tidak ada data yang di cari!",
-					pageInfo
-				);
-				return;
+				console.log(searchName);
+				console.log(page);
+				console.log(limit);
+				console.log(sort);
+				if (searchName === undefined) {
+					redis.setex(
+						`getMovie:all`,
+						3600,
+						JSON.stringify({ allMovie, pageInfo })
+					);
+					return helperWrapper.response(
+						response,
+						200,
+						"Berhasil mendapatkan semua data!",
+						allMovie,
+						pageInfo
+					);
+				} else {
+					return helperWrapper.response(
+						response,
+						404,
+						"Movie tidak ditemukan!"
+					);
+				}
 			}
 
 			let newDataMovie = [];
@@ -95,7 +99,7 @@ module.exports = {
 			for (const data in results) {
 				const setNewData = {
 					...results[data],
-					releaseDate: results[data].releaseDate.toLocaleDateString(),
+					releaseDate: moment().format("LL"),
 				};
 				newDataMovie.push(setNewData);
 			}
@@ -241,6 +245,28 @@ module.exports = {
 					result
 				);
 			}
+		} catch (error) {
+			return helperWrapper.response(
+				response,
+				400,
+				`Bad Request ${error.message}`,
+				null
+			);
+		}
+	},
+	getMovieUpcomming: async (request, response) => {
+		try {
+			const { date } = request.query;
+			const upcommingMovies = await movieModel.upcommingMovie(date);
+			if (upcommingMovies.length < 1) {
+				return helperWrapper.response(response, 404, "Movie not found!", null);
+			}
+			return helperWrapper.response(
+				response,
+				200,
+				"Success Get data upcomming movie!",
+				upcommingMovies
+			);
 		} catch (error) {
 			return helperWrapper.response(
 				response,

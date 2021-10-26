@@ -73,7 +73,7 @@ module.exports = {
 						response,
 						200,
 						"berhasil mendapatkan data sesuai pencarian!",
-						newDataSchedule.results,
+						newDataSchedule.newDataResults,
 						newDataSchedule.pageInfo
 					);
 				} else {

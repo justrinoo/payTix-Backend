@@ -23,8 +23,8 @@ Schedule Task
   - PENDING => ACCEPTED
     }
 
--Verification Email Expired => ACCEPTED{
-BUT! => token expired get new token ? or daftar ulang ?
-}
--Get Movie By DateTime - DateEnd (Range)
+-Verification Email Expired => ACCEPTED
+=> token expired get new token ? or daftar ulang ?
+
+-Get Schedule By DateTime - DateEnd (Range)
 -Export Ticket Design => ACCEPTED

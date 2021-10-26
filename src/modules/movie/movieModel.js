@@ -96,4 +96,18 @@ module.exports = {
 				}
 			});
 		}),
+	upcommingMovie: (date) =>
+		new Promise((resolve, reject) => {
+			connection.query(
+				"SELECT * FROM movie WHERE MONTHNAME(releaseDate) = ?",
+				date,
+				(error, results) => {
+					if (!error) {
+						resolve(results);
+					} else {
+						reject(new Error(`Message : ${error.message}`));
+					}
+				}
+			);
+		}),
 };
