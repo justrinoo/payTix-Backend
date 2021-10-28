@@ -30,10 +30,6 @@ module.exports = {
 			};
 			const allMovie = await movieModel.getAllMovie();
 			if (results.length < 1) {
-				console.log(searchName);
-				console.log(page);
-				console.log(limit);
-				console.log(sort);
 				if (searchName === undefined) {
 					redis.setex(
 						`getMovie:all`,

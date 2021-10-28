@@ -64,30 +64,38 @@ module.exports = {
 
 	// REDIS SCHEDULE
 	getScheduleRedis: (request, response, next) => {
+		// Pengecekan 2 Model Query
 		redis.get(
 			`getSchedule:${JSON.stringify(request.query)}`,
 			(error, results) => {
+				// Berdasarkan Pencarian
 				if (!error && results !== null) {
-					const newDataSchedule = JSON.parse(results);
+					const newResult = JSON.parse(results);
+					console.log(newResult);
 					return helperResponse.response(
 						response,
 						200,
-						"berhasil mendapatkan data sesuai pencarian!",
-						newDataSchedule.newDataResults,
-						newDataSchedule.pageInfo
+						"Berhasil mengambil data Schedule berdasarkan pencarian!",
+						newResult.newDataSchedule,
+						newResult.pageInfo
 					);
 				} else {
-					// redis.get(`getSchedule:all`, (error, results) => {
-					// 	const newAllData = JSON.parse(results);
-					// 	if (!error && results !== null) {
-					// 		return helperResponse.response(
-					// 			response,
-					// 			200,
-					// 			"berhasil mendapatkan semua data!",
-					// 			newAllData.allSchedule,
-					// 			newAllData.pageAllData
-					// 		);
-					next();
+					// Berdasarkan semua data movie atau endpoint => '/movie'
+					redis.get(`getSchedule:all`, (error, results) => {
+						if (!error && results !== null) {
+							const newResult = JSON.parse(results);
+							console.log(newResult);
+							return helperResponse.response(
+								response,
+								200,
+								"Berhasil mengambil semua data Schedule!",
+								newResult.newAllSchedule,
+								newResult.pageInfo
+							);
+						} else {
+							next();
+						}
+					});
 				}
 			}
 		);
