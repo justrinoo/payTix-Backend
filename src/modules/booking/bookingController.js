@@ -310,6 +310,7 @@ module.exports = {
 			const fileName = `ticket-${id}.pdf`;
 			const userBooking = await bookingModel.getExportTicketByIdBooking(id);
 			// join seat => ['A1', 'A2', 'A3']
+			// console.log(userBooking);
 
 			const seatBooking = userBooking.map((value) => value.seat);
 			let newData = [];
@@ -320,14 +321,13 @@ module.exports = {
 				newData.push(setNewData);
 			});
 			const newDataBooking = newData[0];
-
 			const newDataBookingTicket = {
 				...newDataBooking,
 				dateBooking: moment().format("DD MMM"),
 				timeBooking: moment().format("LT"),
 				seat: seatBooking,
-				linkTicket: `http://${request.get("host")}/booking/used-ticket/${
-					newDataBooking.bookingId
+				ticketActive: `http://${request.get("host")}/booking/used-ticket/${
+					newDataBooking.id
 				}`,
 			};
 			ejs.renderFile(
@@ -342,7 +342,7 @@ module.exports = {
 						htmlPdf
 							.create(results, options)
 							.toFile(
-								path.resolve(`./public/generate/${fileName}`),
+								path.resolve(`./public/generateasas/${fileName}`),
 								(error, results) => {
 									if (error) {
 										return helperResponse.response(
@@ -355,11 +355,7 @@ module.exports = {
 										response,
 										200,
 										"Success Generate Ticket!",
-										{
-											file_ticket: `http://${request.get(
-												"host"
-											)}/generate/${fileName}`,
-										}
+										[newDataBookingTicket]
 									);
 								}
 							);

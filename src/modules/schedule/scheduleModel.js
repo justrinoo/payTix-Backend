@@ -4,8 +4,10 @@ module.exports = {
 	getScheduleSearch: (searchMoveId, searchLocation, limit, offset, sort) =>
 		new Promise((resolve, reject) => {
 			connection.query(
-				`SELECT * FROM schedule WHERE movie_id = ? AND location LIKE ? ORDER BY price ${sort} LIMIT ? OFFSET ?`,
-				[searchMoveId, `%${searchLocation}%`, limit, offset, sort],
+				`SELECT * FROM schedule WHERE ${
+					searchMoveId && `movie_id = ${searchMoveId} AND`
+				}  location LIKE "%${searchLocation}%" ORDER BY price ${sort} LIMIT ? OFFSET ?`,
+				[limit, offset, sort],
 				(error, results) => {
 					if (!error) {
 						resolve(results);
@@ -27,17 +29,22 @@ module.exports = {
 		}),
 	totalDataSchedule: (searchMovieId, searchLocation) =>
 		new Promise((resolve, reject) => {
-			connection.query(
-				"SELECT COUNT(*) as total FROM schedule WHERE movie_id = ? AND location LIKE ?",
-				[searchMovieId, `%${searchLocation}%`],
+			const query = connection.query(
+				`SELECT COUNT(*) as total FROM schedule WHERE ${
+					searchMovieId && "movie_id = ? AND"
+				} location LIKE '%${searchLocation}%'`,
+				searchMovieId,
 				(error, results) => {
+					console.log(error);
 					if (!error) {
+						console.log(results);
 						resolve(results[0].total);
 					} else {
 						reject(new Error(`Message : ${error.sqlMessage}`));
 					}
 				}
 			);
+			console.log(query.sql);
 		}),
 	GetDetailSchedule: (id) =>
 		new Promise((resolve, reject) => {

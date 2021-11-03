@@ -7,7 +7,7 @@ const middlewareUpload = require("../../middleware/uploadMovie");
 Router.get(
 	"/",
 	// middlewareAuth.authentication,
-	middlewareRedis.getMovieRedis,
+	// middlewareRedis.getMovieRedis,
 	movieController.getAllMovie
 ); // user & admin
 

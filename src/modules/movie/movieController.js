@@ -9,8 +9,9 @@ module.exports = {
 		try {
 			let { page, limit, searchName, sort = "ASC" } = request.query;
 			page = page > 0 ? Number(page) : 1;
-			limit = limit > 0 ? Number(limit) : 10;
+			limit = limit > 0 ? Number(limit) : 8;
 			sort = sort === "" ? "ASC" : sort;
+			searchName = searchName ? searchName : "";
 			const offset = page * limit - limit;
 			const totalData = await movieModel.getCountMovie(searchName);
 			let totalPage = Math.ceil(totalData / limit);

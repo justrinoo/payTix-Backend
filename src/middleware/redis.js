@@ -71,7 +71,7 @@ module.exports = {
 				// Berdasarkan Pencarian
 				if (!error && results !== null) {
 					const newResult = JSON.parse(results);
-					console.log(newResult);
+					// console.log(newResult);
 					return helperResponse.response(
 						response,
 						200,

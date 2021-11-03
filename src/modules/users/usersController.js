@@ -163,17 +163,18 @@ module.exports = {
 	getDashboard: async (request, response) => {
 		try {
 			const { movieId, location, premier } = request.query;
-			const users = await userModel.dashboard(movieId, location, premier);
-
-			const newUsers = [];
-			users.forEach((value) => {
-				const newDataUsers = {
+			const booking = await userModel.dashboard(movieId, location, premier);
+			const newDataBooking = [];
+			booking.forEach((value) => {
+				const data = {
 					...value,
-					month: moment().format("MMM"),
+					month: moment()
+						.month(value.month - 1)
+						.format("MMM"),
 				};
-				newUsers.push(newDataUsers);
+				newDataBooking.push(data);
 			});
-			if (newUsers.length < 1) {
+			if (newDataBooking.length < 1) {
 				return helperResponse.response(
 					response,
 					404,
@@ -181,11 +182,12 @@ module.exports = {
 					null
 				);
 			}
+
 			return helperResponse.response(
 				response,
 				200,
 				"Success Get data Dashboard",
-				newUsers
+				newDataBooking
 			);
 		} catch (error) {
 			return helperResponse.response(

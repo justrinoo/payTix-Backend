@@ -15,6 +15,8 @@ module.exports = {
 			page = page > 0 ? Number(page) : 1;
 			limit = limit > 0 ? Number(limit) : 10;
 			sort = sort === "" ? "ASC" : sort;
+			searchMovieId = searchMovieId ? searchMovieId : "";
+			searchLocation = searchLocation ? searchLocation : "";
 			const offset = page * limit - limit;
 			const totalData = await scheduleModel.totalDataSchedule(
 				searchMovieId,
@@ -149,6 +151,7 @@ module.exports = {
 				time: time.split(" ").join(""),
 			};
 			const results = await scheduleModel.createSchedule(dataSchedule);
+			console.log(results);
 			return helperResponse.response(
 				response,
 				200,

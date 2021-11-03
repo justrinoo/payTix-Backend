@@ -6,8 +6,8 @@ const redisMiddleware = require("../../middleware/redis");
 Router.get(
 	"/",
 	authMiddleware.authentication,
-	redisMiddleware.getScheduleRedis,
-	scheduleController.getAllSchedule
+	scheduleController.getAllSchedule,
+	redisMiddleware.getScheduleRedis
 );
 Router.get(
 	"/date",

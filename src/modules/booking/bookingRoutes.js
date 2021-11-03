@@ -15,11 +15,7 @@ Router.get(
 	bookingControlller.exportTicketUserBooking
 );
 
-Router.get(
-	"/used-ticket/:id",
-	middlewareAuth.isAdmin,
-	bookingControlller.ticketAlreadyUsed
-);
+Router.get("/used-ticket/:id", bookingControlller.ticketAlreadyUsed);
 Router.get(
 	"/user-id",
 	middlewareAuth.isUser,
