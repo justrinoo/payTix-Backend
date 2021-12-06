@@ -104,7 +104,7 @@ module.exports = {
 	updateImage: async (request, response) => {
 		try {
 			const userId = request.decodeToken.id;
-			if (request.file === undefined) {
+			if (!request.file) {
 				return helperResponse.response(
 					response,
 					400,
@@ -112,6 +112,7 @@ module.exports = {
 					null
 				);
 			}
+			console.log("image user id =>", userId);
 			if (userId.length < 1) {
 				return helperResponse.response(response, 404, "user not found!", null);
 			}
