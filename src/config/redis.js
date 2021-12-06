@@ -1,7 +1,7 @@
 require("dotenv").config();
 const redis = require("redis");
 
-// Production
+//Production
 const client = redis.createClient({
 	host: process.env.REDIS_HOSTNAME,
 	port: process.env.REDIS_PORT,
