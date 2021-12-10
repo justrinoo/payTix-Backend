@@ -8,7 +8,7 @@ const client = redis.createClient({
 	password: process.env.REDIS_PASSWORD,
 });
 
-// // Devlopment
+// Devlopment
 // const client = redis.createClient();
 
 client.on("connect", () => {
