@@ -1,6 +1,7 @@
 const helperResponse = require("../../helpers/wrapper");
 const bookingModel = require("./bookingModel");
 const { transactions, notification } = require("../../helpers/midtrans");
+const { GetDetailSchedule } = require("../schedule/scheduleModel");
 const { v4: uuid } = require("uuid");
 const htmlPdf = require("html-pdf");
 const ejs = require("ejs");
@@ -143,6 +144,17 @@ module.exports = {
 				paymentMethod,
 				seat: totalTicket,
 			} = request.body;
+
+			const detailSchedule = await GetDetailSchedule(scheduleId);
+
+			let getPremiereSchedule = "";
+			detailSchedule.map((value) => {
+				const setNewData = {
+					...value,
+				};
+				let dataPremiere = setNewData.premiere;
+				return (getPremiereSchedule = dataPremiere);
+			});
 			const setDataPostBooking = {
 				id: uuid(),
 				userId: user_id,
@@ -152,13 +164,22 @@ module.exports = {
 				timeBooking,
 				totalTicket,
 				paymentMethod,
-				totalPayment: (totalPayment = 10 * totalTicket.length),
+				totalPayment:
+					getPremiereSchedule === "Hiflix"
+						? totalTicket.length * 50000
+						: getPremiereSchedule === "Ebv.id"
+						? totalTicket.length * 35000
+						: getPremiereSchedule === "CineOne21"
+						? totalTicket.length * 75000
+						: null,
 				statusPayment: "Pending",
 			};
 			const newDataPostBooking = {
 				...setDataPostBooking,
 				totalTicket: totalTicket.length,
 			};
+
+			console.log("oke");
 
 			const resultPostBooking = await bookingModel.createBooking(
 				newDataPostBooking.id,
@@ -168,10 +189,10 @@ module.exports = {
 			const dataListSeat = { ...resultPostBooking };
 			const id_booking = dataListSeat.id;
 
-			// const transaction = await transactions(
-			// 	id_booking,
-			// 	resultPostBooking.totalPayment
-			// );
+			const transaction = await transactions(
+				id_booking,
+				resultPostBooking.totalPayment
+			);
 			const results = dataListSeat;
 			totalTicket.forEach(async (totalTicket) => {
 				let newDataSeatBooking = {
@@ -186,8 +207,8 @@ module.exports = {
 			});
 
 			helperResponse.response(response, 201, "Booking berhasil dibuat!", {
-				results,
-				// redirect_url: transaction,
+				// results,
+				redirect_url: transaction,
 			});
 		} catch (error) {
 			helperResponse.response(
