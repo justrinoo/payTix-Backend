@@ -32,7 +32,7 @@ module.exports = {
 	detailBookingId: (id) =>
 		new Promise((resolve, reject) => {
 			connection.query(
-				"SELECT booking.id,booking.movieId,booking.scheduleId,booking.dateBooking,booking.timeBooking,booking.totalTicket,booking.totalPayment,booking.paymentMethod,booking.statusPayment,seatbooking.seat FROM booking JOIN seatbooking ON booking.id = seatbooking.bookingId WHERE booking.id = ?", // disni join seatBooking
+				"SELECT booking.id,booking.movieId,booking.scheduleId,booking.dateBooking,booking.timeBooking,booking.totalTicket,booking.totalPayment,booking.paymentMethod,booking.statusPayment,seatBooking.seat FROM booking JOIN seatBooking ON booking.id = seatBooking.bookingId WHERE booking.id = ?", // disni join seatBooking
 				id,
 				(error, results) => {
 					if (!error) {

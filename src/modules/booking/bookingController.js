@@ -363,7 +363,7 @@ module.exports = {
 						htmlPdf
 							.create(results, options)
 							.toFile(
-								path.resolve(`./public/generateasas/${fileName}`),
+								path.resolve(`./public/generate/${fileName}`),
 								(error, results) => {
 									if (error) {
 										return helperResponse.response(
