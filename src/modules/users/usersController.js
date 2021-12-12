@@ -123,6 +123,7 @@ module.exports = {
 				? request.file.filename
 				: checkImage[0].image;
 
+
 			const newImage = await userModel.updateImage(setDataImage, userId);
 			// jika user default imagenya null
 			if (checkImage[0].image === null) {
